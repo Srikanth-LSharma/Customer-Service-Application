@@ -1,26 +1,18 @@
-import logo from './logo.svg';
+
+import React from 'react';
 import './App.css';
+import AppRouter from '../src/AppRouter'  
+//import Employeelist from './components/employeeList';
+//import Login from '../src/components/login'
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <p>
-          Hello World
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {/*<Employeelist name="Srikanth" salary="35150"/>
+      <Employeelist name="Hari" salary="55150"/>
+      <Employeelist name= "Vishnu" salary ="29999"> My hobbies are playing cricket </Employeelist>
+  */}
+    <AppRouter/>
     </div>
   );
 }
