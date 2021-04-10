@@ -1,6 +1,6 @@
-import React from 'react';
+import React,{ useState }from 'react';
 import Avatar from '@material-ui/core/Avatar';
-import Bg from '../Assets/image.jpg'
+import Bg from '../../Assets/image.jpg'
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -14,7 +14,8 @@ import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import "../../node_modules/bootstrap/dist/css/bootstrap.css"
+//import "../../node_modules/bootstrap/dist/css/bootstrap.css";
+import axios from 'axios';
 //import Signup from '../components/signup';
 
 
@@ -49,8 +50,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login() {
+ function SignInSide(props) {
   const classes = useStyles();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const grant_type="password";
+  
+  const handleSubmit = (e) =>{ 
+    e.preventDefault();
+    const loginText = "username="+username+"&password="+password+"&grant_type="+grant_type;
+    console.log(loginText);    
+    axios.post("https://localhost:44353/token",loginText).then(response =>{
+            console.log("Accepted input",response.data)
+                }).catch((e)=>console.log(e));
+    props.history.push('/About');
+  }
 
   return (
     <Grid container component="main" className={classes.root}>      
@@ -64,7 +78,7 @@ export default function Login() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate>
+          <form onSubmit={handleSubmit} className={classes.form}>
             <TextField
               variant="outlined"
               margin="normal"
@@ -75,6 +89,8 @@ export default function Login() {
               name="email"
               autoComplete="email"
               autoFocus
+              value={username}
+              onChange={e => setUsername(e.target.value)}
             />
             <TextField
               variant="outlined"
@@ -86,6 +102,8 @@ export default function Login() {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -96,7 +114,7 @@ export default function Login() {
               fullWidth
               variant="contained"
               color="primary"
-              className={classes.submit}
+              className={classes.submit}         
             >
               Sign In
             </Button>
@@ -120,3 +138,5 @@ export default function Login() {
     </Grid>
   );
 }
+
+export default SignInSide;
