@@ -20,7 +20,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems, secondaryListItems } from './ListItems';
 //import Chart from './Chart';
-import Deposits from './Tiles';
+import {EmployeeCount, CustomerCount, OpenTickets,EmployeeTicketCount} from './Tiles';
 //import Orders from './Orders';
 
 function Copyright() {
@@ -143,7 +143,7 @@ export default function Dashboard() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Dashboard
+             DASHBOARD
           </Typography>
           <IconButton color="inherit">
             <Badge badgeContent={4} color="secondary">
@@ -182,22 +182,22 @@ export default function Dashboard() {
             {/* Recent Deposits */}
             <Grid item xs={12} md={4} lg={6}>
               <Paper className={fixedHeightPaper}>
-                <Deposits />
+                <EmployeeCount/>
               </Paper>
             </Grid>
             <Grid item xs={12} md={4} lg={6}>
               <Paper className={fixedHeightPaper}>
-                <Deposits />
+                <CustomerCount/>
               </Paper>
             </Grid>
             <Grid item xs={12} md={4} lg={6}>
               <Paper className={fixedHeightPaper}>
-                <Deposits />
+                <OpenTickets/>
               </Paper>
             </Grid>
             <Grid item xs={12} md={4} lg={6}>
               <Paper className={fixedHeightPaper}>
-                <Deposits/>
+                <EmployeeTicketCount/>
               </Paper>
             </Grid>
             {/* Recent Orders 
