@@ -11,6 +11,7 @@ import {Link } from "react-router-dom";
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
+import SnackBar from '../../components/SnackBar';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -59,18 +60,27 @@ const KEYS = {
   const classes = useStyles();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [notify, setNotify] = useState({ isOpen: false, message: "", type: "" });
   const grant_type="password";
   
   const handleSubmit = (e) =>{ 
     e.preventDefault();
-    const loginText = "username="+username+"&password="+password+"&grant_type="+grant_type;
-    console.log(loginText);    
+    const loginText = "username="+username+"&password="+password+"&grant_type="+grant_type;   
     axios.post("http://localhost:888/token",loginText).then(response =>{
             console.log("Accepted input",response.data)
             localStorage.setItem(KEYS.access_token, response.data.access_token)
             localStorage.setItem(KEYS.userName, response.data.userName)
-            console.log("username=abi13766@gmail.com&password=Abhishekl#5998&grant_type=password")
-                }).catch((e)=>console.log(e));
+            setNotify({
+              isOpen: true,
+              message: "Login Successful",
+              type: "success",
+            })
+            }).catch((e)=>
+                 setNotify({
+                  isOpen: true,
+                  message: e.response.data.error_description,
+                  type: "error",
+            }));
     
   }
 
@@ -113,10 +123,6 @@ const KEYS = {
               value={password}
               onChange={e => setPassword(e.target.value)}
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
             <Button
               type="submit"
               fullWidth
@@ -140,9 +146,10 @@ const KEYS = {
             </Grid>
             <Box mt={5}>
             </Box>
-          </form>
+          </form>          
         </div>
-      </Grid>
+      </Grid>  
+      <SnackBar notify={notify} setNotify={setNotify} />    
     </Grid>
   );
 }
