@@ -63,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
     axios.post("https://localhost:44353/token",loginText).then(response =>{
             console.log("Accepted input",response.data)
                 }).catch((e)=>console.log(e));
+                
     props.history.push('/About');
   }
 
