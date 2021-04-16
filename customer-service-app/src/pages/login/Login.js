@@ -50,6 +50,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const KEYS = {
+  access_token: 'access_token',
+  userName: 'userName'
+}
+
  function SignInSide(props) {
   const classes = useStyles();
   const [username, setUsername] = useState('');
@@ -60,10 +65,13 @@ const useStyles = makeStyles((theme) => ({
     e.preventDefault();
     const loginText = "username="+username+"&password="+password+"&grant_type="+grant_type;
     console.log(loginText);    
-    axios.post("https://localhost:44353/token",loginText).then(response =>{
+    axios.post("http://localhost:888/token",loginText).then(response =>{
             console.log("Accepted input",response.data)
+            localStorage.setItem(KEYS.access_token, response.data.access_token)
+            localStorage.setItem(KEYS.userName, response.data.userName)
+            console.log("username=abi13766@gmail.com&password=Abhishekl#5998&grant_type=password")
                 }).catch((e)=>console.log(e));
-    props.history.push('/About');
+    
   }
 
   return (

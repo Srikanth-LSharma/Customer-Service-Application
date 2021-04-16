@@ -8,7 +8,8 @@ import About from './components/About';
 import Contact from './components/Contact';
 import Navbar from './components/NavBar';
 import Dashboard from './pages/manager/Dashboard';
-import { PinDropSharp } from '@material-ui/icons';
+import Customer from './pages/customer/CustomerView';
+import ManagerTemplate from './pages/manager/ManagerTemplate';
 
 
 const LoginContainer = () => (
@@ -24,6 +25,8 @@ const LoginContainer = () => (
         <Route path= '/About' component ={About}/>
         <Route path= '/Contact' component ={Contact}/>
         <Route path= '/Dashboard' component ={Dashboard}/>
+        <Route path= '/CustomerTickets' component ={Customer}/>
+        <Route path= '/Manager' component ={ManagerTemplate}/>
       </div>
    )
 
@@ -33,7 +36,7 @@ const AppRouter = (props)=>  {
                 <Switch>
                     <div className="App-Router">
                     {
-                        props.location.pathname!=='/Login' && props.location.pathname!=='/Signup' && props.location.pathname!=='/Dashboard'? <Navbar/>:null
+                        props.location.pathname!=='/Login' && props.location.pathname!=='/Signup' && props.location.pathname!=='/Dashboard' && props.location.pathname!=='/CustomerTickets' && props.location.pathname!=='/Manager'? <Navbar/>:null
                     }
                         <Route exact component={LoginContainer}/> 
                         <Route exact component={DefaultContainer}/>     

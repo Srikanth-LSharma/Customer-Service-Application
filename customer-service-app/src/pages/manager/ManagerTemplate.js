@@ -19,9 +19,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems, secondaryListItems } from './ListItems';
-//import Chart from './Chart';
-import {EmployeeCount, CustomerCount, OpenTickets,EmployeeTicketCount} from './Tiles';
-//import Orders from './Orders';
+import Header from "../../components/Header";
+import EmpTicketView from "./EmpTicketView";
 
 function Copyright() {
   return (
@@ -63,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
+      easing: theme.transitions.easing.easeIn,
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
@@ -167,36 +166,7 @@ export default function Dashboard() {
         <Divider />
         <List>{mainListItems}</List>
       </Drawer>
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={4} lg={6}>
-              <Paper className={fixedHeightPaper}>
-                <EmployeeCount/>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={4} lg={6}>
-              <Paper className={fixedHeightPaper}>
-                <CustomerCount/>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={4} lg={6}>
-              <Paper className={fixedHeightPaper}>
-                <OpenTickets/>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={4} lg={6}>
-              <Paper className={fixedHeightPaper}>
-                <EmployeeTicketCount/>
-              </Paper>
-            </Grid>
-          </Grid>
-          <Box pt={4}>
-            <Copyright />
-          </Box>
-        </Container>
-      </main>
+      <EmpTicketView/>
     </div>
   );
 }

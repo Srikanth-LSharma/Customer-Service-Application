@@ -11,7 +11,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { Autorenew, ViewColumnTwoTone } from '@material-ui/icons';
-import Date from '../../components/controls/Datedisplay';
+import {dateDisplay} from '../../components/controls/Datedisplay';
 
 function preventDefault(event) {
   event.preventDefault();
@@ -57,7 +57,7 @@ export function EmployeeCount(props) {
         {empcount}
       </Typography>
       <Typography color="textSecondary" className={classes.depositContext}>
-        as of <Date/>
+        as of {dateDisplay()}
       </Typography>
     </React.Fragment>
   );
@@ -82,7 +82,7 @@ export function CustomerCount(props) {
         {custcount}
       </Typography>
       <Typography color="textSecondary" className={classes.depositContext}>
-          as of <Date/>
+          as of {dateDisplay()}
       </Typography>
     </React.Fragment>
   );
@@ -107,7 +107,7 @@ export function OpenTickets(props) {
         {otcount}
       </Typography>
       <Typography color="textSecondary" className={classes.depositContext}>
-          as of <Date/>
+          as of {dateDisplay()}
       </Typography>
     </React.Fragment>
   );
@@ -155,7 +155,7 @@ export function EmployeeTicketCount(props) {
         </Typography> 
              
       <Typography color="textSecondary" className={classes.asOfContext}>
-          as of <Date/>
+          as of {dateDisplay()}
       </Typography>
     </React.Fragment>
   );

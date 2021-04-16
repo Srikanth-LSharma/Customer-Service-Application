@@ -17,12 +17,9 @@ const Home = () => {
       }
 
     const registerUser = () =>{
-        axios.post("https://localhost:44353/api/Account/Register",user).then(res=>{
-            console.log("test",res.data);
-           
+        axios.post("http://localhost:888/api/Account/Register",user).then(res=>{
+            console.log("test",res.data);           
         }).catch(e => {console.log(e)});
-
-        
     }
      
     const getCustomers=()=>{
@@ -53,7 +50,7 @@ const Home = () => {
 
     const handleSubmit = () =>{ 
         
-        axios.post("https://localhost:44353/token","username=dhinesh1@gmail.com&password=Password#1234&grant_type=password").then(response =>{
+        axios.post("http://localhost:888/token","username=dhinesh1@gmail.com&password=Password#1234&grant_type=password").then(response =>{
                 console.log("Accepted input",response.data)
                     }).catch((e)=>console.log(e))
     }
@@ -68,7 +65,7 @@ const Home = () => {
               fullWidth
               variant="contained"
               color="primary"
-              onClick ={handleSubmit}
+              onClick ={registerUser}
             >
               Get Employees
             </Button>
