@@ -12,10 +12,10 @@ const genderItems = [
 
 const Name="Srikanth"; //instead retrive cust ID from local storage 
 const initialFValues = {
-    id: 0,
+    TicketID: 0,
     date: '',
     Custname: '',
-    ProductID: '',
+    ProductID: 0,
     serviceExId:'', 
     reviewerId:'',
     priorityId:'',
@@ -29,12 +29,10 @@ export default function EmployeeForm(props) {
 
     const validate = (fieldValues = values) => {
         let temp = { ...errors }
-        if ('productId' in fieldValues)
-            temp.productId = fieldValues.productId.length != 0 ? "" : "This field is required."
-        if ('statusId' in fieldValues)
-            temp.statusId = fieldValues.statusId.length != 0 ? "" : "This field is required."
-        if ('comment' in fieldValues)
-            temp.comment = fieldValues.comment.length != 0 ? "" : "This field is required."
+        if ('ProductID' in fieldValues)
+            temp.ProductID = fieldValues.ProductID.length != 0 ? "" : "This field is required."
+        if ('Status' in fieldValues)
+            temp.Status = fieldValues.Status.length != 0 ? "" : "This field is required."
         setErrors({
             ...temp
         })
@@ -55,6 +53,7 @@ export default function EmployeeForm(props) {
     const handleSubmit = e => {
         e.preventDefault()
         if (validate()) {
+            console.log("submit validated")
             addOrEdit(values, resetForm);
         }
     }
@@ -73,11 +72,17 @@ export default function EmployeeForm(props) {
         <Form onSubmit={handleSubmit}>
             <Grid container>
                 <Grid item xs={20}>
-                   
+                    {/*<Controls.Input
+                        label="TicketID"
+                        name="TicketID"
+                        value={values.TicketID}
+                        onChange={handleInputChange}
+                        error={errors.TicketID}
+                    />*/}
                     <Controls.Select
                         name="ProductID"
                         label="Product"
-                        value={values.ProductId}
+                        value={values.ProductID}
                         onChange={handleInputChange}
                         options={CustTicketService.getProductCollection()}
                         error={errors.ProductID}
@@ -104,7 +109,7 @@ export default function EmployeeForm(props) {
                         value={values.feedback}
                         onChange={handleInputChange}
                         error={errors.feedback}
-                        disabled={values.statusID=="Open"? true: false}
+                        disabled={values.Status=="Open"? true: false}
                     />
                     <div>
                         <Controls.Button
