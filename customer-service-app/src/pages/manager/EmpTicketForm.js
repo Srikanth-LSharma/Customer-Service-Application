@@ -89,6 +89,7 @@ export default function EmployeeForm(props) {
                         label="Priority"
                         value={values.PriorityId}
                         options={EmpTicketService.getPriorityCollection()}
+                        onChange={handleInputChange}
                         error={errors.PriorityId}
                         align='center'
                     />                 

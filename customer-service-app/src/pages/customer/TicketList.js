@@ -17,6 +17,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import ConfirmDialog from "../../components/ConfirmDialog";
 import Client from '../../services/api/Client'
 import SnackBar from'../../components/SnackBar'
+import ChatIcon from '@material-ui/icons/Chat';
 
 const useStyles = makeStyles(theme => ({
     pageContent: {
@@ -50,7 +51,7 @@ const useStyles = makeStyles(theme => ({
 
 
 const headCells = [
-    { id: 'id', label: 'Ticket ID' },
+    { id: 'TicketID', label: 'Ticket ID' },
     { id: 'name', label: 'Customer Name' },
     { id: 'date', label: 'Date' },
     { id: 'Product', label: 'Product' },    
@@ -68,7 +69,11 @@ export default function CustomerTicketsList() {
     const [openPopup, setOpenPopup] = useState(false)
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
     const [statusID, setStatusID] = useState("")
+    const [customerID ,setCustomerID] = useState("");
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', subTitle: '' })
+    const [servID, setServID] = useState("");
+    const [revID, setRevID] = useState("");
+    const [prioID, setPrioID] = useState("");
 
     const getProductCollection = () => ([
         { id: '1', title: 'Monitor' },
@@ -84,6 +89,7 @@ export default function CustomerTicketsList() {
         { id: '11', title: 'Processors' },
         { id: '12', title: 'Controllers' },
     ])
+   
     
     const {
         TblContainer,
@@ -92,7 +98,8 @@ export default function CustomerTicketsList() {
         recordsAfterPagingAndSorting
     } = useTable(records, headCells, filterFn);
 
-    useEffect(() => {
+
+    const displayTickets=()=>{
         let products = getProductCollection();
         Client.get("/api/CustomerTickets").then(res=>{
               setRecords(res.data)
@@ -105,6 +112,11 @@ export default function CustomerTicketsList() {
           .catch((error) => {
             console.log(error);
           })
+    }
+
+    useEffect(() => {
+        displayTickets()
+        getCustID()
       }, []);
 
     const handleSearch = e => {
@@ -114,20 +126,71 @@ export default function CustomerTicketsList() {
                 if (target.value == "")
                     return items;
                 else
-                    return items.filter(x => x.CustName.toLowerCase().includes(target.value.toLowerCase()))
+                    return items.filter(x => x.Product.toLowerCase().includes(target.value.toLowerCase()))
             }
         })
     }
 
+    const getCustID=()=>{
+        Client.get('/api/Customer').then(res=>{
+            setCustomerID(res.data.CustID)
+        }).catch((e)=>{
+            console.log(e)
+        });
+    }
+
+    
+    const getTicketDetails=(id)=>{
+        Client.get('/api/CustTicket/'+id).then(
+            response =>{
+                   console.log("Ticket details:",response.data)
+                   setServID(Number(response.data.ServiceExecId));
+                   setRevID(Number(response.data.ReviewerId));
+                   setPrioID(Number(response.data.PriorityId));
+                   console.log("servID:",servID,"revID:",revID,"PrioID",prioID)
+            }).catch((e)=>console.log(e))
+    }
+    
+
     const addOrEdit = (ticket, resetForm) => {
-        if (ticket.id == 0)
-            CustTicketService.insertTicket(ticket)
-        else
-            CustTicketService.updateTicket(ticket)
+        const data = {
+            ProdID: Number(ticket.ProductID)
+        };
+        if (ticket.TicketID == 0){      
+            console.log("Ticket:",data);
+            Client.post('/api/AddTicket',data).then(
+                response =>{
+                    displayTickets()
+                       console.log("Accepted input",response.data)
+                }).catch((e)=>console.log(e))
+            console.log("Test Addition");
+        }
+            
+        else{
+
+            getTicketDetails(ticket.TicketID)
+
+            const editdata={
+                TicketID: Number(ticket.TicketID),
+                ServiceReqDate: ticket.ServiceReqDate,
+                CustID: Number(customerID),
+                ProdID: Number(ticket.ProductID),
+                ServiceExecID: servID,
+                ReviewerID:  revID,
+                PriorityID:  prioID,
+                Feedback: ticket.Feedback,
+                Status: ticket.Status
+            }
+            console.log("Ticket Edit Data:",editdata)
+            Client.put('/api/EditCustTicket/'+editdata.TicketID,editdata).then(
+                response =>{
+                    displayTickets()
+                       console.log("Accepted input",response.data)
+                }).catch((e)=>console.log(e))
+            }            
         resetForm()
         setRecordForEdit(null)
         setOpenPopup(false)
-        setRecords(CustTicketService.getAllTickets())
         setNotify({
             isOpen: true,
             message: 'Submitted Successfully',
@@ -145,7 +208,7 @@ export default function CustomerTicketsList() {
             ...confirmDialog,
             isOpen: false
         })
-        CustTicketService.deleteTicket(id);
+        //CustTicketService.deleteTicket(id);
         setRecords(CustTicketService.getAllTickets())
         setNotify({
             isOpen: true,
@@ -165,7 +228,7 @@ export default function CustomerTicketsList() {
 
                 <Toolbar>
                     <Controls.Input
-                        label="Search Customer Name"
+                        label="Search Product"
                         className={classes.searchInput}
                         InputProps={{
                             startAdornment: (<InputAdornment position="start">
@@ -214,6 +277,10 @@ export default function CustomerTicketsList() {
                                             }}>
                                             <CloseIcon fontSize="small" />
                                         </Controls.ActionButton>*/}
+                                        <Controls.ActionButton
+                                            color="primary" >
+                                            <ChatIcon fontSize="small" />
+                                        </Controls.ActionButton>
                                     </TableCell>
                                 </TableRow>)
                             )

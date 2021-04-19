@@ -2,7 +2,7 @@ import React from 'react';
 import SideMenu from "../../components/SideMenu";
 import { makeStyles, CssBaseline, createMuiTheme, ThemeProvider } from '@material-ui/core';
 import Header from "../../components/Header";
-import TicketList from "./TicketList";
+import ServiceExecList from "./ServiceExecList";
 
 const theme = createMuiTheme({
   palette: {
@@ -46,8 +46,8 @@ function CustomerView() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className={classes.custviewMain}>
-            <TicketList/>
+      <div className={classes.custviewMain}> 
+            <ServiceExecList/>
       </div>
       <CssBaseline />
     </ThemeProvider>

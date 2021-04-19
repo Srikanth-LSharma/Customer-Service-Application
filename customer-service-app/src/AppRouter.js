@@ -10,6 +10,7 @@ import Navbar from './components/NavBar';
 import Dashboard from './pages/manager/Dashboard';
 import Customer from './pages/customer/CustomerView';
 import ManagerTemplate from './pages/manager/ManagerTemplate';
+import ServiceExecView from './pages/serviceExec/ServiceExecView'
 
 
 const LoginContainer = () => (
@@ -27,6 +28,7 @@ const LoginContainer = () => (
         <Route path= '/Dashboard' component ={Dashboard}/>
         <Route path= '/CustomerTickets' component ={Customer}/>
         <Route path= '/Manager' component ={ManagerTemplate}/>
+        <Route path= '/ServiceExec' component ={ServiceExecView}/>
       </div>
    )
 
@@ -36,7 +38,7 @@ const AppRouter = (props)=>  {
                 <Switch>
                     <div className="App-Router">
                     {
-                        props.location.pathname!=='/Login' && props.location.pathname!=='/Signup' && props.location.pathname!=='/Dashboard' && props.location.pathname!=='/CustomerTickets' && props.location.pathname!=='/Manager'? <Navbar/>:null
+                        props.location.pathname!=='/Login' && props.location.pathname!=='/Signup' && props.location.pathname!=='/Dashboard'  && props.location.pathname!=='/Manager'? <Navbar/>:null
                     }
                         <Route exact component={LoginContainer}/> 
                         <Route exact component={DefaultContainer}/>     

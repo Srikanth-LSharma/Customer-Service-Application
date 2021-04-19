@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import EmpTicketForm from "./EmpTicketForm";
 import PageHeader from "../../components/PageHeader";
 import PeopleOutlineTwoToneIcon from '@material-ui/icons/PeopleOutlineTwoTone';
 import RateReviewTwoToneIcon from '@material-ui/icons/RateReviewTwoTone';
@@ -15,7 +14,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import ConfirmDialog from "../../components/ConfirmDialog";
 import Client from '../../services/api/Client'
 import SnackBar from'../../components/SnackBar'
-import CustomerTicketsList from '../customer/TicketList';
 import ChatIcon from '@material-ui/icons/Chat';
 
 const useStyles = makeStyles(theme => ({
@@ -64,8 +62,7 @@ const headCells = [
     { id: 'Product', label: 'Product' },
     { id: 'Priority', label: 'Priority' },
     { id: 'status', label: 'Status' },
-    { id: 'feedback', label: 'Feedback' },
-    { id: 'actions', label: 'Actions', disableSorting: true }
+    { id: 'actions', label: 'Chat', disableSorting: true }
 ]
 
 export default function Employees() {
@@ -89,7 +86,7 @@ export default function Employees() {
     const displayTickets=()=>{
         let products= EmpTicketService.getProductCollection();
         let priorities = EmpTicketService.getPriorityCollection();
-        Client.get("/api/EmpTickets").then(res=>{
+        Client.get("/api/TicketsServiceExec").then(res=>{
               setRecords(res.data.map(x => ({
                 ...x,
                 Product: products[x.ProductID - 1].title,
@@ -101,21 +98,6 @@ export default function Employees() {
           .catch((error) => {
             console.log(error);
           })
-    }
-
-    const getCustID=(custname)=>{
-        Client.get('/api/CustomerIdByName/'+custname).then(res=>{
-            setCustomerID(res.data)
-        }).catch((e)=>{
-            console.log(e)
-        });
-    }
-
-    const getTicketDetails=(id)=>{
-        Client.get('/api/ServExecTicket/'+id).then(
-            response =>{
-                   console.log("Ticket details:",response.data)
-            }).catch((e)=>console.log(e))
     }
 
     useEffect(() => {
@@ -133,44 +115,6 @@ export default function Employees() {
                     return items.filter(x => x.CustName.toLowerCase().includes(target.value.toLowerCase()))
             }
         })
-    }
-
-    const addOrEdit = (ticket, resetForm) => {
-        console.log("ticket:",ticket)
-        getTicketDetails(ticket.TicketID)
-        console.log(ticket.CustName)
-        getCustID(ticket.CustName)
-        const editdata={
-            TicketID: Number(ticket.TicketID),
-            ServiceReqDate: ticket.ServiceReqDate,
-            CustID: customerID,
-            ProdID: Number(ticket.ProductID),
-            ServiceExecID:  Number(ticket.ServiceExecId),
-            ReviewerID:   Number(ticket.ReviewerId),
-            PriorityID:   Number(ticket.PriorityId),
-            Feedback: ticket.Feedback,
-            Status: ticket.Status
-        }
-        console.log("Edit Data to be passed to api:",editdata);
-        Client.put('/api/EditEmpTicket/'+editdata.TicketID,editdata).then(
-            response =>{
-                displayTickets()
-                   console.log("Accepted input",response.data)
-            }).catch((e)=>console.log(e))
-         
-        resetForm()
-        setRecordForEdit(null)
-        setOpenPopup(false)
-        setNotify({
-            isOpen: true,
-            message: 'Submitted Successfully',
-            type: 'success'
-        })
-    }
-
-    const openInPopup = item => {
-        setRecordForEdit(item)
-        setOpenPopup(true)
     }
 
     return (
@@ -210,13 +154,7 @@ export default function Employees() {
                                     <TableCell align='center'>
                                         <div className={item.Status=='Open'? classes.statusCellOpen : classes.statusCellClosed} align='center' >{item.Status} </div> 
                                     </TableCell>
-                                    <TableCell align='center'>{item.Feedback===''? '-':item.Feedback}</TableCell>
                                     <TableCell align='center'>
-                                        <Controls.ActionButton
-                                            color="primary"
-                                            onClick={() => { openInPopup(item) }}>
-                                            <EditOutlinedIcon fontSize="small" />
-                                        </Controls.ActionButton>
                                         <Controls.ActionButton
                                             color="primary" >
                                             <ChatIcon fontSize="small" />
@@ -229,19 +167,6 @@ export default function Employees() {
                 </TblContainer>
                 <TblPagination />
             </Paper>
-            <Popup
-                title="Ticket Form"
-                openPopup={openPopup}
-                setOpenPopup={setOpenPopup}
-            >
-                <EmpTicketForm
-                    recordForEdit={recordForEdit}
-                    addOrEdit={addOrEdit} />
-            </Popup>
-            <ConfirmDialog
-                confirmDialog={confirmDialog}
-                setConfirmDialog={setConfirmDialog}
-            />
             <SnackBar notify={notify} setNotify={setNotify} />
         </>
     )
