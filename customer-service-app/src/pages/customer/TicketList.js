@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import TicketForm from "./TicketForm";
 import PageHeader from "../../components/PageHeader";
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
@@ -15,6 +15,8 @@ import Popup from "../../components/Popup";
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import ConfirmDialog from "../../components/ConfirmDialog";
+import Client from '../../services/api/Client'
+import SnackBar from'../../components/SnackBar'
 
 const useStyles = makeStyles(theme => ({
     pageContent: {
@@ -49,30 +51,61 @@ const useStyles = makeStyles(theme => ({
 
 const headCells = [
     { id: 'id', label: 'Ticket ID' },
-    { id: 'email', label: 'Customer Email ID' },
+    { id: 'name', label: 'Customer Name' },
     { id: 'date', label: 'Date' },
-    { id: 'product', label: 'Product' },    
-    { id: 'statusId', label: 'Status' },
+    { id: 'Product', label: 'Product' },    
+    { id: 'status', label: 'Status' },
     { id: 'feedback', label: 'Feedback' },
     { id: 'actions', label: 'Actions', disableSorting: true }
 ]
 
-export default function Employees() {
+export default function CustomerTicketsList() {
 
     const classes = useStyles();
     const [recordForEdit, setRecordForEdit] = useState(null)
-    const [records, setRecords] = useState(CustTicketService.getAllTickets())
+    const [records, setRecords] = useState([])
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const [openPopup, setOpenPopup] = useState(false)
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
+    const [statusID, setStatusID] = useState("")
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', subTitle: '' })
 
+    const getProductCollection = () => ([
+        { id: '1', title: 'Monitor' },
+        { id: '2', title: 'Keyboards and mice' },
+        { id: '3', title: 'Motherboards' },
+        { id: '4', title: 'Printers' },
+        { id: '5', title: 'Scanners' },
+        { id: '6', title: 'Microphone' },
+        { id: '7', title: 'Webcam' },
+        { id: '8', title: 'Speakers' },
+        { id: '9', title: 'DVD Drives' },
+        { id: '10', title: 'Adapters and Chargers' },
+        { id: '11', title: 'Processors' },
+        { id: '12', title: 'Controllers' },
+    ])
+    
     const {
         TblContainer,
         TblHead,
         TblPagination,
         recordsAfterPagingAndSorting
     } = useTable(records, headCells, filterFn);
+
+    useEffect(() => {
+        let products = getProductCollection();
+        Client.get("/api/CustomerTickets").then(res=>{
+              setRecords(res.data)
+              setRecords(res.data.map(x => ({
+                ...x,
+                Product: products[x.ProductID - 1].title,
+              })))
+            console.log(res.data)
+        })
+          .catch((error) => {
+            console.log(error);
+          })
+      }, []);
 
     const handleSearch = e => {
         let target = e.target;
@@ -81,16 +114,16 @@ export default function Employees() {
                 if (target.value == "")
                     return items;
                 else
-                    return items.filter(x => x.email.toLowerCase().includes(target.value.toLowerCase()))
+                    return items.filter(x => x.CustName.toLowerCase().includes(target.value.toLowerCase()))
             }
         })
     }
 
-    const addOrEdit = (employee, resetForm) => {
-        if (employee.id == 0)
-            CustTicketService.insertTicket(employee)
+    const addOrEdit = (ticket, resetForm) => {
+        if (ticket.id == 0)
+            CustTicketService.insertTicket(ticket)
         else
-            CustTicketService.updateTicket(employee)
+            CustTicketService.updateTicket(ticket)
         resetForm()
         setRecordForEdit(null)
         setOpenPopup(false)
@@ -132,7 +165,7 @@ export default function Employees() {
 
                 <Toolbar>
                     <Controls.Input
-                        label="Search Customer Email ID"
+                        label="Search Customer Name"
                         className={classes.searchInput}
                         InputProps={{
                             startAdornment: (<InputAdornment position="start">
@@ -150,26 +183,26 @@ export default function Employees() {
                     />
                 </Toolbar>
                 <TblContainer>
-                    <TblHead />
+                    <TblHead/>
                     <TableBody>
                         {
                             recordsAfterPagingAndSorting().map(item =>
-                                (<TableRow key={item.id}>
-                                    <TableCell align='center'>{item.id}</TableCell>
-                                    <TableCell align='center'>{item.email}</TableCell>
-                                    <TableCell align='center'>{item.date}</TableCell>                                   
-                                    <TableCell align='center'>{item.product}</TableCell>                                    
+                                (<TableRow key={item.TicketID}>
+                                    <TableCell align='center'>{item.TicketID}</TableCell>
+                                    <TableCell align='center'>{item.CustName}</TableCell>
+                                    <TableCell align='center'>{item.ServiceReqDate}</TableCell>                                   
+                                    <TableCell align='center'>{item.Product}</TableCell>                                    
                                     <TableCell>
-                                        <div  align='center' className={item.status=='Open'? classes.statusCellOpen : classes.statusCellClosed} >{item.status} </div> 
+                                        <div  align='center' className={item.Status=='Open'? classes.statusCellOpen : classes.statusCellClosed} >{item.Status} </div> 
                                     </TableCell>
-                                    <TableCell align='center'>{item.feedback}</TableCell>
+                                    <TableCell align='center'>{item.Feedback}</TableCell>
                                     <TableCell align='center'>
                                         <Controls.ActionButton
                                             color="primary"
                                             onClick={() => { openInPopup(item) }}>
                                             <EditOutlinedIcon fontSize="small" />
                                         </Controls.ActionButton>
-                                        <Controls.ActionButton
+                                        {/*<Controls.ActionButton
                                             color="secondary"
                                             onClick={() => {
                                                 setConfirmDialog({
@@ -180,7 +213,7 @@ export default function Employees() {
                                                 })
                                             }}>
                                             <CloseIcon fontSize="small" />
-                                        </Controls.ActionButton>
+                                        </Controls.ActionButton>*/}
                                     </TableCell>
                                 </TableRow>)
                             )
@@ -202,6 +235,7 @@ export default function Employees() {
                 confirmDialog={confirmDialog}
                 setConfirmDialog={setConfirmDialog}
             />
+            <SnackBar notify={notify} setNotify={setNotify} />
         </>
     )
 }

@@ -1,6 +1,9 @@
+import Client from './api/Client'
+
 const KEYS = {
     employees: 'employees',
-    employeeId: 'employeeId'
+    employeeId: 'employeeId',
+    tickets:'tickets'
 }
 
 
@@ -20,8 +23,8 @@ export const getProductCollection = () => ([
 ])
 
 export const getStatusCollection = () => ([
-    { id: '1', title:'Open'},
-    { id: '2', title:'Closed'},
+    { id: 'Open', title:'Open'},
+    { id: 'Closed', title:'Closed'},
 ])
 
 export const getPriorityCollection = () => ([
@@ -63,7 +66,10 @@ export function generateTicketId() {
 export function getAllTickets() {
     if (localStorage.getItem(KEYS.employees) == null)
         localStorage.setItem(KEYS.employees, JSON.stringify([]))
+    
     let employees = JSON.parse(localStorage.getItem(KEYS.employees));
+   
+    console.log("These are the employees",employees);
     //map departmentID to department title
     let products = getProductCollection();
     let statuses = getStatusCollection();
@@ -74,4 +80,25 @@ export function getAllTickets() {
         status: statuses[x.statusId-1].title,       
 
     }))
+}
+
+export function getCustomerTickets() {
+    let employees = [];
+    console.log(employees);
+    Client.get("/api/CustomerTickets").then(res=>{
+        let tickets = res.data;
+        employees=tickets
+        console.log(tickets);
+    })
+    //map departmentID to department title
+    let products = getProductCollection();
+    let statuses = getStatusCollection();
+    let priorities = getPriorityCollection();
+    return employees.map(x => ({
+        ...x,
+        product: products[x.productId - 1].title,
+        status: statuses[x.statusId-1].title,       
+
+    }))
+    
 }

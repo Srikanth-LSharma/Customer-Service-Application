@@ -12,6 +12,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { Autorenew, ViewColumnTwoTone } from '@material-ui/icons';
 import {dateDisplay} from '../../components/controls/Datedisplay';
+import Client from '../../services/api/Client'
 
 function preventDefault(event) {
   event.preventDefault();
@@ -42,7 +43,7 @@ export function EmployeeCount(props) {
   const [empcount, setEmpCount] = useState('');
 
   useEffect(()=>{
-    axios.get("https://localhost:44353/api/Manager/EmployeesCount").then(res=>{
+    Client.get("/api/Manager/EmployeesCount").then(res=>{
         setEmpCount(res.data);
         window.localStorage.setItem('empcount', res.data);
     }).catch((e)=>{
@@ -68,7 +69,7 @@ export function CustomerCount(props) {
   const [custcount, setCustCount] = useState('');
 
   useEffect(()=>{
-    axios.get("https://localhost:44353/api/Manager/CustomerCount").then(res=>{
+    Client.get("/api/Manager/CustomerCount").then(res=>{
         setCustCount(res.data);
     }).catch((e)=>{
         console.log(e)
@@ -93,7 +94,7 @@ export function OpenTickets(props) {
   const [otcount, setOTCount] = useState('');
 
   useEffect(()=>{
-    axios.get("https://localhost:44353/api/Manager/OpenTickets").then(res=>{
+    Client.get("/api/Manager/OpenTickets").then(res=>{
         setOTCount(res.data);
     }).catch((e)=>{
         console.log(e)
@@ -131,8 +132,8 @@ export function EmployeeTicketCount(props) {
     }
     
   useEffect(()=>{
-    const url='https://localhost:44353/api/Manager/EmployeeTicketCount?id='+empID;
-    axios.get(url).then(res=>{
+    const url='/api/Manager/EmployeeTicketCount?id='+empID;
+    Client.get(url).then(res=>{
         setETCount(res.data);
     }).catch((e)=>{
         console.log(e)

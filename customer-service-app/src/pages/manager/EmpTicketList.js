@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import EmpTicketForm from "./EmpTicketForm";
 import PageHeader from "../../components/PageHeader";
 import PeopleOutlineTwoToneIcon from '@material-ui/icons/PeopleOutlineTwoTone';
@@ -13,6 +13,9 @@ import Popup from "../../components/Popup";
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import ConfirmDialog from "../../components/ConfirmDialog";
+import Client from '../../services/api/Client'
+import SnackBar from'../../components/SnackBar'
+import CustomerTicketsList from '../customer/TicketList';
 
 const useStyles = makeStyles(theme => ({
     pageContent: {
@@ -53,12 +56,12 @@ const useStyles = makeStyles(theme => ({
 
 const headCells = [
     { id: 'id', label: 'Ticket ID' },
-    { id: 'email', label: 'Customer Email' },
+    { id: 'name', label: 'Customer Name' },
     { id: 'date', label: 'Date' },
     { id: 'serviceExId', label: 'ServiceExID' },
     { id: 'reviewerId', label: 'ReviewerID' },
-    { id: 'product', label: 'Product' },
-    { id: 'priority', label: 'Priority' },
+    { id: 'Product', label: 'Product' },
+    { id: 'Priority', label: 'Priority' },
     { id: 'status', label: 'Status' },
     { id: 'feedback', label: 'Feedback' },
     { id: 'actions', label: 'Actions', disableSorting: true }
@@ -68,7 +71,7 @@ export default function Employees() {
 
     const classes = useStyles();
     const [recordForEdit, setRecordForEdit] = useState(null)
-    const [records, setRecords] = useState(EmpTicketService.getAllTickets())
+    const [records, setRecords] = useState([])
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const [openPopup, setOpenPopup] = useState(false)
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
@@ -81,6 +84,24 @@ export default function Employees() {
         recordsAfterPagingAndSorting
     } = useTable(records, headCells, filterFn);
 
+    useEffect(() => {
+        let products= EmpTicketService.getProductCollection();
+        let priorities = EmpTicketService.getPriorityCollection();
+        Client.get("/api/EmpTickets").then(res=>{
+              setRecords(res.data.map(x => ({
+                ...x,
+                Product: products[x.ProductID - 1].title,
+                Priority: priorities[x.PriorityId - 1].title,
+              })))
+              
+            console.log(res.data)
+        })
+          .catch((error) => {
+            console.log(error);
+          })
+      }, []);
+
+
     const handleSearch = e => {
         let target = e.target;
         setFilterFn({
@@ -88,7 +109,7 @@ export default function Employees() {
                 if (target.value == "")
                     return items;
                 else
-                    return items.filter(x => x.email.toLowerCase().includes(target.value.toLowerCase()))
+                    return items.filter(x => x.CustName.toLowerCase().includes(target.value.toLowerCase()))
             }
         })
     }
@@ -138,18 +159,18 @@ export default function Employees() {
                     <TableBody>
                         {
                             recordsAfterPagingAndSorting().map(item =>
-                                (<TableRow key={item.id}>
-                                    <TableCell>{item.id}</TableCell>
-                                    <TableCell>{item.email}</TableCell>
-                                    <TableCell>{item.date}</TableCell>
-                                    <TableCell>{item.serviceExID}</TableCell>
-                                    <TableCell>{item.reviewerID}</TableCell>
-                                    <TableCell>{item.product}</TableCell>
-                                    <TableCell>{item.priority}</TableCell>
+                                (<TableRow key={item.TicketID}>
+                                    <TableCell>{item.TicketID}</TableCell>
+                                    <TableCell>{item.CustName}</TableCell>
+                                    <TableCell>{item.ServiceReqDate}</TableCell>
+                                    <TableCell>{item.ServiceExecId}</TableCell>
+                                    <TableCell>{item.ReviewerId}</TableCell>
+                                    <TableCell>{item.Product}</TableCell>
+                                    <TableCell>{item.Priority}</TableCell>
                                     <TableCell>
-                                        <div className={item.status=='Open'? classes.statusCellOpen : classes.statusCellClosed} >{item.status} </div> 
+                                        <div className={item.Status=='Open'? classes.statusCellOpen : classes.statusCellClosed} >{item.Status} </div> 
                                     </TableCell>
-                                    <TableCell>{item.feedback===''? '-':item.feedback}</TableCell>
+                                    <TableCell>{item.Feedback===''? '-':item.Feedback}</TableCell>
                                     <TableCell>
                                         <Controls.ActionButton
                                             color="primary"

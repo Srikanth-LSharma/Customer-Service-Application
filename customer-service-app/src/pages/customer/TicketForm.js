@@ -14,13 +14,13 @@ const Name="Srikanth"; //instead retrive cust ID from local storage
 const initialFValues = {
     id: 0,
     date: '',
-    email: '',
-    productId: '',
+    Custname: '',
+    ProductID: '',
     serviceExId:'', 
     reviewerId:'',
     priorityId:'',
     comment:'',
-    statusId:'1',
+    Status:'Open',
     feedback:'',
 }
 
@@ -29,8 +29,6 @@ export default function EmployeeForm(props) {
 
     const validate = (fieldValues = values) => {
         let temp = { ...errors }
-        if ('email' in fieldValues)
-            temp.email = (/$^|.+@.+..+/).test(fieldValues.email) ? "" : "Email is not valid."
         if ('productId' in fieldValues)
             temp.productId = fieldValues.productId.length != 0 ? "" : "This field is required."
         if ('statusId' in fieldValues)
@@ -74,45 +72,31 @@ export default function EmployeeForm(props) {
     return (
         <Form onSubmit={handleSubmit}>
             <Grid container>
-                <Grid item xs={6}>
-                    <Controls.Input
-                        label="Cust Email"
-                        name="email"
-                        value={values.email}
-                        onChange={handleInputChange}
-                        error={errors.email}
-                    />
-                    <Controls.Input
-                        label="Date and Time"
-                        name="date"
-                        value={date.substring(0, index)}
-                        onChange={handleInputChange}
-                        error={errors.date}
-                    />
+                <Grid item xs={20}>
+                   
                     <Controls.Select
-                        name="productId"
+                        name="ProductID"
                         label="Product"
-                        value={values.productId}
+                        value={values.ProductId}
                         onChange={handleInputChange}
                         options={CustTicketService.getProductCollection()}
-                        error={errors.productId}
+                        error={errors.ProductID}
                     />
-                </Grid>
-                <Grid item xs={6}>
-                    <Controls.Input
+                    {/*<Controls.Input
                         label=" Issue "
                         name="comment"
                         value={values.comment}
                         onChange={handleInputChange}
                         error={errors.comment}
-                    />
+                    />*/}
+                    
                     <Controls.Select
-                        name="statusId"
+                        name="Status"
                         label="Status"
-                        value={values.statusId}
+                        value={values.Status}
                         onChange={handleInputChange}
                         options={CustTicketService.getStatusCollection()}
-                        error={errors.statusId}
+                        error={errors.Status}
                     />
                     <Controls.Input
                         label="Feedback"
@@ -120,9 +104,8 @@ export default function EmployeeForm(props) {
                         value={values.feedback}
                         onChange={handleInputChange}
                         error={errors.feedback}
-                        disabled={values.statusId==1? true: false}
+                        disabled={values.statusID=="Open"? true: false}
                     />
-                    
                     <div>
                         <Controls.Button
                             type="submit"

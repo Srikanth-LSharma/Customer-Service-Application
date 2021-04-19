@@ -13,6 +13,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import SnackBar from '../../components/SnackBar';
 import axios from 'axios';
 //import Login from '../components/login'
 
@@ -44,6 +45,7 @@ export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmpassword, setConfirmPassword] = useState(''); 
+  const [notify, setNotify] = useState({ isOpen: false, message: "", type: "" });
 
   const user={
     Email: email,
@@ -62,7 +64,16 @@ export default function SignUp() {
     axios.post("http://localhost:888/api/Account/Register",user).then(res=>{
         console.log("test",res.data);     
         reset(); 
-    }).catch(e => {console.log(e)});
+    }).catch((e)=>
+        setNotify({
+        isOpen: true,
+        message: e.response.request.response.split(':')[3].split('"')[1],
+        type: "error",
+       // for common one --> e.response.request.response.split(':')[3].split('"')[1]
+       // for passwords do not match use this -->e.response.request.response.split(',')[1].split(':')[2].slice(2,-4)
+       // for username already taken use this --> e.response.request.response.split(':')[3].split(',')[1].slice(1,-4)
+  })
+  );  
 }
   return (
       <div> 
@@ -160,6 +171,7 @@ export default function SignUp() {
         <Box mt={3}>
         </Box>
         </Container>
+        <SnackBar notify={notify} setNotify={setNotify} />
       </div>
   );
 }

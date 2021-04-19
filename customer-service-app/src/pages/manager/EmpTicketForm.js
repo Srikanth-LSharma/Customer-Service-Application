@@ -9,16 +9,16 @@ import {dateDisplay} from "../../components/controls/Datedisplay"
 const Name="Srikanth"; //instead retrive cust ID from local storage 
 //const dateDisplay = lazy(() => import("../../components/controls/Datedisplay"));
 const initialFValues = {
-    id: 0,
-    date: '',
-    email: '',
-    productId: '',
-    serviceExId:'', 
-    reviewerId:'',
-    priorityId:'',
+    TicketID: 0,
+    ServiceReqDate: '',
+    CustName: '',
+    ProductID: '',
+    ServiceExecId:'', 
+    ReviewerId:'',
+    PriorityId:'',
     comment:'',
-    statusId:'1',
-    feedback:'',
+    Status:'Open',
+    Feedback:'',
 }
 
 export default function EmployeeForm(props) {
@@ -26,8 +26,6 @@ export default function EmployeeForm(props) {
 
     const validate = (fieldValues = values) => {
         let temp = { ...errors }
-        if ('email' in fieldValues)
-            temp.email = (/$^|.+@.+..+/).test(fieldValues.email) ? "" : "Email is not valid."
         //if ('productId' in fieldValues)
         //    temp.productId = fieldValues.productId.length != 0 ? "" : "This field is required."
         if ('comment' in fieldValues)
@@ -69,79 +67,31 @@ export default function EmployeeForm(props) {
     return (
         <Form onSubmit={handleSubmit}>
             <Grid container>
-                <Grid item xs={6}>
-                    <Controls.Input
-                        label="Cust Email"
-                        name="email"
-                        value={values.email}
-                        onChange={handleInputChange}
-                        error={errors.email}
-                        disabled
-                    />
-                    <Controls.Input
-                        label="Date and Time"
-                        name="date"
-                        value={date.substring(0, index)}
-                        onChange={handleInputChange}
-                        error={errors.date}
-                        disabled
-                    />
+                <Grid item xs={10} align='center'>
                     <Controls.Input
                         label="Service Exec ID"
-                        name="serviceExId"
-                        value={values.serviceExID}
+                        name="ServiceExecId"
+                        value={values.ServiceExecId}
                         onChange={handleInputChange}
-                        error={errors.serviceExID}
+                        error={errors.ServiceExecId}
+                        align='center'
                     />
-                    <Controls.Input
+                    <Controls.Input 
                         label="Reviewer ID"
-                        name="reviewerId"
-                        value={values.reviewerID}
+                        name="ReviewerId"
+                        value={values.ReviewerId}
                         onChange={handleInputChange}
-                        error={errors.reviewerID}
+                        error={errors.ReviewerId}
+                        align='center'
                     />
                     <Controls.Select
-                        name="productId"
-                        label="Product"
-                        value={values.productId}
-                        options={EmpTicketService.getProductCollection()}
-                        isSearchable={false}
-                        onChange={handleInputChange}
-                        error={errors.productId}
-                        disabled
-                    />
-                </Grid>
-                <Grid item xs={6}>
-                    <Controls.Select
-                        name="priorityId"
+                        name="PriorityId"
                         label="Priority"
-                        value={values.priorityId}
+                        value={values.PriorityId}
                         options={EmpTicketService.getPriorityCollection()}
-                        error={errors.priorityId}
-                    />
-                    <Controls.Input
-                        label=" Issue "
-                        name="comment"
-                        value={values.comment}
-                        onChange={handleInputChange}
-                        error={errors.comment}
-                        disabled
-                    />
-                    <Controls.Select
-                        name="statusId"
-                        label="Status"
-                        value={values.statusId}
-                        options={EmpTicketService.getStatusCollection()}
-                        error={errors.statusId}
-                        disabled
-                    />
-                    <Controls.Input
-                        label="Feedback"
-                        name="feedback"
-                        value={values.feedback}
-                        error={errors.feedback}
-                        disabled
-                    />                    
+                        error={errors.PriorityId}
+                        align='center'
+                    />                 
                     <div>
                         <Controls.Button
                             type="submit"

@@ -4,7 +4,7 @@ import { Alert } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    top: theme.spacing(30),
+    top: theme.spacing(3),
   },
 }));
 
@@ -24,10 +24,10 @@ export default function SnackBar(props) {
 
   return (
     <Snackbar
-      className={classes.root}
+      //className={classes.root}
       open={notify.isOpen}
       autoHideDuration={2000}
-      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      anchorOrigin={{ vertical: "top", horizontal: "right" }}
       onClose={handleClose}
     >
       <Alert severity={notify.type} onClose={handleClose}>
