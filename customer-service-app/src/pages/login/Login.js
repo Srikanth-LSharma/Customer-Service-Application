@@ -17,6 +17,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 //import "../../node_modules/bootstrap/dist/css/bootstrap.css";
 import axios from 'axios';
+import Client from '../../services/api/Client';
 //import Signup from '../components/signup';
 
 
@@ -53,23 +54,38 @@ const useStyles = makeStyles((theme) => ({
 
 const KEYS = {
   access_token: 'access_token',
-  userName: 'userName'
+  userName: 'userName',
+  expiry:'expiry'
 }
 
  function SignInSide(props) {
   const classes = useStyles();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('');
   const [notify, setNotify] = useState({ isOpen: false, message: "", type: "" });
   const grant_type="password";
   
+  
   const handleSubmit = (e) =>{ 
     e.preventDefault();
+    
     const loginText = "username="+username+"&password="+password+"&grant_type="+grant_type;   
     axios.post("http://localhost:888/token",loginText).then(response =>{
+            let expires = ".expires";
             console.log("Accepted input",response.data)
-            localStorage.setItem(KEYS.access_token, response.data.access_token)
+            console.log("Expiry date and time:",response.data[expires])
+            let today = new Date();
+            let token = response.data.access_token;
+            console.log("Current Date and Time:",today.toGMTString());
+            localStorage.setItem(KEYS.expiry,response.data[expires])
+            localStorage.setItem(KEYS.access_token, token)
             localStorage.setItem(KEYS.userName, response.data.userName)
+            Client.get("/api/userRoles").then(res=>
+              {
+                setRole(res.data);
+                console.log("Role: ",role);           
+              }).catch(e => {console.log(e)});
             setNotify({
               isOpen: true,
               message: "Login Successful",
