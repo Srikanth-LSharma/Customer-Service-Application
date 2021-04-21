@@ -2,7 +2,7 @@
 import React from 'react';
 import './App.css';
 import AppRouter from '../src/AppRouter';
-import { BrowserRouter as Router,withRouter, Switch, Route} from 'react-router-dom';
+import { BrowserRouter as Router} from 'react-router-dom';
 //import LoginTemp from './component/Logintemp';
 
 function App() {

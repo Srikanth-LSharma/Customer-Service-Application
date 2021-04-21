@@ -1,7 +1,5 @@
 import React from 'react';
-import SideMenu from "../../components/SideMenu";
 import { makeStyles, CssBaseline, createMuiTheme, ThemeProvider } from '@material-ui/core';
-import Header from "../../components/Header";
 import TicketList from "./TicketList";
 
 const theme = createMuiTheme({

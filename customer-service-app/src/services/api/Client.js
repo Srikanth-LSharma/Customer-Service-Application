@@ -4,12 +4,9 @@ const Client = axios.create({
   baseURL: 'http://localhost:888',
 });
 
-const accessToken=localStorage.getItem('access_token');
-const dummyaccessToken = "HELLOWORLD"
-
 Client.interceptors.request.use(
   config => {
-      config.headers.authorization= `Bearer ${accessToken}`;
+      config.headers.authorization= `Bearer ${localStorage.getItem('access_token')}`;
     return config;
   },
   (error) => Promise.reject(error)

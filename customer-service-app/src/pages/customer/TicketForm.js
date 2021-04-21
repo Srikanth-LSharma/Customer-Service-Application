@@ -1,16 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Grid, } from '@material-ui/core';
 import Controls from "../../components/controls/Controls";
 import { useForm, Form } from '../../components/useForm';
 import * as CustTicketService from "../../services/CustTicketService";
 
-const genderItems = [
-    { id: 'male', title: 'Male' },
-    { id: 'female', title: 'Female' },
-    { id: 'other', title: 'Other' },
-]
 
-const Name="Srikanth"; //instead retrive cust ID from local storage 
 const initialFValues = {
     TicketID: 0,
     date: '',
@@ -30,15 +24,15 @@ export default function EmployeeForm(props) {
     const validate = (fieldValues = values) => {
         let temp = { ...errors }
         if ('ProductID' in fieldValues)
-            temp.ProductID = fieldValues.ProductID.length != 0 ? "" : "This field is required."
+            temp.ProductID = fieldValues.ProductID.length !== 0 ? "" : "This field is required."
         if ('Status' in fieldValues)
-            temp.Status = fieldValues.Status.length != 0 ? "" : "This field is required."
+            temp.Status = fieldValues.Status.length !== 0 ? "" : "This field is required."
         setErrors({
             ...temp
         })
 
-        if (fieldValues == values)
-            return Object.values(temp).every(x => x == "")
+        if (fieldValues === values)
+            return Object.values(temp).every(x => x === "")
     }
 
     const {
@@ -109,7 +103,7 @@ export default function EmployeeForm(props) {
                         value={values.feedback}
                         onChange={handleInputChange}
                         error={errors.feedback}
-                        disabled={values.Status=="Open"? true: false}
+                        disabled={values.Status==="Open"? true: false}
                     />
                     <div>
                         <Controls.Button

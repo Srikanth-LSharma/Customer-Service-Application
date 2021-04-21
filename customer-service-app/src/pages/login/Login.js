@@ -1,11 +1,9 @@
-import React,{ useState }from 'react';
+import React,{ useEffect, useState }from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Bg from '../../Assets/image.jpg'
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link1 from '@material-ui/core/Link';
 import {Link } from "react-router-dom";
 import Paper from '@material-ui/core/Paper';
@@ -17,7 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 //import "../../node_modules/bootstrap/dist/css/bootstrap.css";
 import axios from 'axios';
-import Client from '../../services/api/Client';
+import CircularProgress from "@material-ui/core/CircularProgress";
 //import Signup from '../components/signup';
 
 
@@ -25,6 +23,12 @@ const useStyles = makeStyles((theme) => ({
   root: {
     height: '100vh',
   },
+  rootLoad: {
+      display: "flex",
+      "& > * + *": {
+        marginLeft: theme.spacing(10),
+      },
+    },
   image: {
     backgroundImage: 'url(' + Bg + ')',
     backgroundRepeat: 'no-repeat',
@@ -55,7 +59,8 @@ const useStyles = makeStyles((theme) => ({
 const KEYS = {
   access_token: 'access_token',
   userName: 'userName',
-  expiry:'expiry'
+  expiry:'expiry',
+  role:'role'
 }
 
  function SignInSide(props) {
@@ -64,8 +69,51 @@ const KEYS = {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
   const [notify, setNotify] = useState({ isOpen: false, message: "", type: "" });
+  const [loading, setLoading] = useState(false);
   const grant_type="password";
   
+  useEffect(()=>{
+     let token = localStorage.getItem("access_token");
+     let _role = localStorage.getItem("role");
+     if(token!=null){
+       console.log("1")
+       if(_role==="manager"){
+         console.log("manager test2")
+         props.history.push('/Manager');
+       }
+       else if(_role==="reviewer"){
+         props.history.push('/Reviewer');
+       }
+       else if(_role==="serviceexec"){
+         props.history.push('/ServiceExec');
+       }
+       else if(_role==="customer"){
+         props.history.push('/CustomerTickets');
+       }
+     }
+    if(role==="manager"){
+      console.log("manager test1")
+      props.history.push('/Manager');
+    }
+    else if(role==="reviewer"){
+      props.history.push('/Reviewer');
+    }
+    else if(role==="serviceexec"){
+      props.history.push('/ServiceExec');
+    }
+    else if(role==="customer"){
+      props.history.push('/CustomerTickets');
+    }
+  },[role])  
+
+
+
+  const roleRedirectingURL=()=>([
+    { id: 'manager', url: '/Manager' },
+    { id: 'customer', url: '/Home' },
+    { id: 'reviewer', url: '/Reviewer' },
+    { id: 'serviceexec', url:'/ServiceExec'}
+])
   
   const handleSubmit = (e) =>{ 
     e.preventDefault();
@@ -78,26 +126,36 @@ const KEYS = {
             let today = new Date();
             let token = response.data.access_token;
             console.log("Current Date and Time:",today.toGMTString());
-            localStorage.setItem(KEYS.expiry,response.data[expires])
-            localStorage.setItem(KEYS.access_token, token)
-            localStorage.setItem(KEYS.userName, response.data.userName)
-            Client.get("/api/userRoles").then(res=>
+            localStorage.setItem(KEYS.expiry,response.data[expires]);
+            localStorage.setItem(KEYS.access_token, token);
+            localStorage.setItem(KEYS.userName, response.data.userName);
+            const config = {
+              headers: { Authorization: `Bearer ${token}` }
+            };
+            axios.get("http://localhost:888/api/userRoles",config).then(res=>
               {
+                localStorage.setItem(KEYS.role,res.data);
+                //window.location.reload(true);
                 setRole(res.data);
-                console.log("Role: ",role);           
-              }).catch(e => {console.log(e)});
+                console.log("Role: ",res.data);              
+             }).catch(e => {console.log(e)})
+             .finally(() => {
+              setTimeout(() => {
+                setLoading(false);
+              }, 1000);
+            });
             setNotify({
               isOpen: true,
               message: "Login Successful",
               type: "success",
             })
+           // let urls=roleRedirectingURL();           
             }).catch((e)=>
                  setNotify({
                   isOpen: true,
                   message: e.response.data.error_description,
                   type: "error",
             }));
-    
   }
 
   return (
@@ -116,6 +174,7 @@ const KEYS = {
             <TextField
               variant="outlined"
               margin="normal"
+              //autoComplete="off"
               required
               fullWidth
               id="email"
@@ -164,6 +223,11 @@ const KEYS = {
             </Box>
           </form>          
         </div>
+        {loading === true && (
+                            <div className={classes.rootLoad}>
+                                 <CircularProgress />
+                            </div>
+                        )}
       </Grid>  
       <SnackBar notify={notify} setNotify={setNotify} />    
     </Grid>

@@ -1,19 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import TicketForm from "./TicketForm";
 import PageHeader from "../../components/PageHeader";
-import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
-import HighlightOffOutlinedIcon from '@material-ui/icons/HighlightOffOutlined';
-import PeopleOutlineTwoToneIcon from '@material-ui/icons/PeopleOutlineTwoTone';
 import RateReviewTwoToneIcon from '@material-ui/icons/RateReviewTwoTone';
 import { Paper, makeStyles, TableBody, TableRow, TableCell, Toolbar, InputAdornment } from '@material-ui/core';
 import useTable from "../../components/useTable";
-import * as CustTicketService from "../../services/CustTicketService";
 import Controls from "../../components/controls/Controls";
 import { Search } from "@material-ui/icons";
 import AddIcon from '@material-ui/icons/Add';
 import Popup from "../../components/Popup";
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import CloseIcon from '@material-ui/icons/Close';
 import ConfirmDialog from "../../components/ConfirmDialog";
 import Client from '../../services/api/Client'
 import SnackBar from'../../components/SnackBar'
@@ -68,7 +63,6 @@ export default function CustomerTicketsList() {
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const [openPopup, setOpenPopup] = useState(false)
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
-    const [statusID, setStatusID] = useState("")
     const [customerID ,setCustomerID] = useState("");
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', subTitle: '' })
     const [servID, setServID] = useState("");
@@ -123,7 +117,7 @@ export default function CustomerTicketsList() {
         let target = e.target;
         setFilterFn({
             fn: items => {
-                if (target.value == "")
+                if (target.value === "")
                     return items;
                 else
                     return items.filter(x => x.Product.toLowerCase().includes(target.value.toLowerCase()))
@@ -139,24 +133,11 @@ export default function CustomerTicketsList() {
         });
     }
 
-    
-    const getTicketDetails=(id)=>{
-        Client.get('/api/CustTicket/'+id).then(
-            response =>{
-                   console.log("Ticket details:",response.data)
-                   setServID(Number(response.data.ServiceExecId));
-                   setRevID(Number(response.data.ReviewerId));
-                   setPrioID(Number(response.data.PriorityId));
-                   console.log("servID:",servID,"revID:",revID,"PrioID",prioID)
-            }).catch((e)=>console.log(e))
-    }
-    
-
     const addOrEdit = (ticket, resetForm) => {
         const data = {
             ProdID: Number(ticket.ProductID)
         };
-        if (ticket.TicketID == 0){      
+        if (ticket.TicketID === 0){      
             console.log("Ticket:",data);
             Client.post('/api/AddTicket',data).then(
                 response =>{
@@ -168,25 +149,32 @@ export default function CustomerTicketsList() {
             
         else{
 
-            getTicketDetails(ticket.TicketID)
-
-            const editdata={
-                TicketID: Number(ticket.TicketID),
-                ServiceReqDate: ticket.ServiceReqDate,
-                CustID: Number(customerID),
-                ProdID: Number(ticket.ProductID),
-                ServiceExecID: servID,
-                ReviewerID:  revID,
-                PriorityID:  prioID,
-                Feedback: ticket.Feedback,
-                Status: ticket.Status
-            }
-            console.log("Ticket Edit Data:",editdata)
-            Client.put('/api/EditCustTicket/'+editdata.TicketID,editdata).then(
-                response =>{
-                    displayTickets()
-                       console.log("Accepted input",response.data)
-                }).catch((e)=>console.log(e))
+            Client.get('/api/CustTicket/'+ticket.TicketID).then(
+            response =>{
+                   console.log("Ticket details:",response.data)
+                   setServID(Number(response.data.ServiceExecId));
+                   setRevID(Number(response.data.ReviewerId));
+                   setPrioID(Number(response.data.PriorityId));
+                   
+                   const editdata={
+                        TicketID: Number(ticket.TicketID),
+                        ServiceReqDate: ticket.ServiceReqDate,
+                        CustID: Number(customerID),
+                        ProdID: Number(ticket.ProductID),
+                        ServiceExecID: Number(response.data.ServiceExecId),
+                        ReviewerID:  Number(response.data.ReviewerId),
+                        PriorityID:  Number(response.data.PriorityId),
+                        Feedback: ticket.Feedback,
+                        Status: ticket.Status
+                    }
+                    Client.put('/api/EditCustTicket/'+editdata.TicketID,editdata).then(
+                    response =>{
+                        displayTickets()
+                        console.log("Accepted input",response.data)
+                    }).catch((e)=>console.log(e))
+                    console.log("Ticket Edit Data:",editdata)
+                   console.log("servID:",servID,"revID:",revID,"PrioID",prioID)
+            }).catch((e)=>console.log(e))           
             }            
         resetForm()
         setRecordForEdit(null)
@@ -203,7 +191,7 @@ export default function CustomerTicketsList() {
         setOpenPopup(true)
     }
 
-    const onDelete = id => {
+    {/*const onDelete = id => {
         setConfirmDialog({
             ...confirmDialog,
             isOpen: false
@@ -215,7 +203,7 @@ export default function CustomerTicketsList() {
             message: 'Deleted Successfully',
             type: 'error'
         })
-    }
+    }*/}
 
     return (
         <>
@@ -253,10 +241,10 @@ export default function CustomerTicketsList() {
                                 (<TableRow key={item.TicketID}>
                                     <TableCell align='center'>{item.TicketID}</TableCell>
                                     <TableCell align='center'>{item.CustName}</TableCell>
-                                    <TableCell align='center'>{item.ServiceReqDate}</TableCell>                                   
+                                    <TableCell align='center'>{item.ServiceReqDate.split("T")[0]}</TableCell>                                   
                                     <TableCell align='center'>{item.Product}</TableCell>                                    
                                     <TableCell>
-                                        <div  align='center' className={item.Status=='Open'? classes.statusCellOpen : classes.statusCellClosed} >{item.Status} </div> 
+                                        <div  align='center' className={item.Status==='Open'? classes.statusCellOpen : classes.statusCellClosed} >{item.Status} </div> 
                                     </TableCell>
                                     <TableCell align='center'>{item.Feedback}</TableCell>
                                     <TableCell align='center'>

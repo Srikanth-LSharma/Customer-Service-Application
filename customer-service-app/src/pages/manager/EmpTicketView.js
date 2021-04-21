@@ -1,8 +1,8 @@
 import React from 'react';
-import SideMenu from "../../components/SideMenu";
 import { makeStyles, CssBaseline, createMuiTheme, ThemeProvider } from '@material-ui/core';
-import Header from "../../components/Header";
+import RateReviewTwoToneIcon from '@material-ui/icons/RateReviewTwoTone';
 import EmpTicketList from "./EmpTicketList";
+import PageHeader from "../../components/PageHeader";
 
 const theme = createMuiTheme({
   palette: {
@@ -47,7 +47,13 @@ function CustomerView() {
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.custviewMain}>
-        <Header/>        
+        {/*<Header/>*/}         
+      <h1> Manager Portal </h1>   
+        <PageHeader
+                title="Ticket List"
+                subTitle="Manager's Portal"
+                icon={<RateReviewTwoToneIcon fontSize="small" />}
+            />
             <EmpTicketList/>
       </div>
       <CssBaseline />

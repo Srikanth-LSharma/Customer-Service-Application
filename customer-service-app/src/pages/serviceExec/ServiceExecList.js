@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import PageHeader from "../../components/PageHeader";
-import PeopleOutlineTwoToneIcon from '@material-ui/icons/PeopleOutlineTwoTone';
 import RateReviewTwoToneIcon from '@material-ui/icons/RateReviewTwoTone';
 import { Paper, makeStyles, TableBody, TableRow, TableCell, Toolbar, InputAdornment } from '@material-ui/core';
 import useTable from "../../components/useTable";
 import * as EmpTicketService from "../../services/EmpTicketService";
 import Controls from "../../components/controls/Controls";
 import { Search } from "@material-ui/icons";
-import AddIcon from '@material-ui/icons/Add';
-import Popup from "../../components/Popup";
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import CloseIcon from '@material-ui/icons/Close';
-import ConfirmDialog from "../../components/ConfirmDialog";
 import Client from '../../services/api/Client'
 import SnackBar from'../../components/SnackBar'
 import ChatIcon from '@material-ui/icons/Chat';
@@ -68,13 +62,10 @@ const headCells = [
 export default function Employees() {
 
     const classes = useStyles();
-    const [recordForEdit, setRecordForEdit] = useState(null)
     const [records, setRecords] = useState([])
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
-    const [openPopup, setOpenPopup] = useState(false)
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
-    const [customerID ,setCustomerID] = useState("");
-    const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', subTitle: '' })
+   
 
     const {
         TblContainer,
@@ -109,7 +100,7 @@ export default function Employees() {
         let target = e.target;
         setFilterFn({
             fn: items => {
-                if (target.value == "")
+                if (target.value === "")
                     return items;
                 else
                     return items.filter(x => x.CustName.toLowerCase().includes(target.value.toLowerCase()))
@@ -152,7 +143,7 @@ export default function Employees() {
                                     <TableCell align='center'>{item.Product}</TableCell>
                                     <TableCell align='center'>{item.Priority}</TableCell>
                                     <TableCell align='center'>
-                                        <div className={item.Status=='Open'? classes.statusCellOpen : classes.statusCellClosed} align='center' >{item.Status} </div> 
+                                        <div className={item.Status==='Open'? classes.statusCellOpen : classes.statusCellClosed} align='center' >{item.Status} </div> 
                                     </TableCell>
                                     <TableCell align='center'>
                                         <Controls.ActionButton

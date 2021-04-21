@@ -1,12 +1,9 @@
-import React, { useState, useEffect, lazy } from 'react'
+import React, { useEffect} from 'react'
 import { Grid, } from '@material-ui/core';
 import Controls from "../../components/controls/Controls";
 import { useForm, Form } from '../../components/useForm';
 import * as EmpTicketService from "../../services/EmpTicketService";
-import {dateDisplay} from "../../components/controls/Datedisplay"
 
-
-const Name="Srikanth"; //instead retrive cust ID from local storage 
 //const dateDisplay = lazy(() => import("../../components/controls/Datedisplay"));
 const initialFValues = {
     TicketID: 0,
@@ -29,13 +26,13 @@ export default function EmployeeForm(props) {
         //if ('productId' in fieldValues)
         //    temp.productId = fieldValues.productId.length != 0 ? "" : "This field is required."
         if ('comment' in fieldValues)
-            temp.comment = fieldValues.comment.length != 0 ? "" : "This field is required."
+            temp.comment = fieldValues.comment.length !== 0 ? "" : "This field is required."
         setErrors({
             ...temp
         })
 
-        if (fieldValues == values)
-            return Object.values(temp).every(x => x == "")
+        if (fieldValues === values)
+            return Object.values(temp).every(x => x === "")
     }
 
     const {

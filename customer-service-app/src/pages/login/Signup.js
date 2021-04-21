@@ -2,9 +2,11 @@ import React,{ useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { useHistory } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import Bg from '../../Assets/signupbg1.JPG'
 //import Link from '@material-ui/core/Link';
 import {Link } from "react-router-dom";
 import Grid from '@material-ui/core/Grid';
@@ -18,6 +20,14 @@ import axios from 'axios';
 //import Login from '../components/login'
 
 
+const sectionStyle = {
+  backgroundImage: `url(${Bg})`,
+  backgroundRepeat: 'no-repeat',
+  backgroundSize: 'cover',
+  width: '100vw',
+  height: '100vh',
+  paddingTop:'10px'
+};
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -26,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
   },
+  
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
@@ -35,8 +46,31 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
+    margin: theme.spacing(3, 2, 2),
   },
+  gridbtn:{
+    paddingRight: theme.spacing(1),
+    marginLeft: theme.spacing(2)
+  },
+  signupbtn:{
+    margin: theme.spacing(3, 2, 2),
+    backgroundColor:"#ffffff",
+    color: '#3330c9',
+      '&:hover': {
+        color:'#ffffff',
+        transform: 'scale(1.1)',
+  }
+  },
+  resetbtn:{
+    margin: theme.spacing(3, 2, 2),
+    backgroundColor:"#ffffff",
+    color: '#3330c9',
+      '&:hover': {
+        color:'#e01f33',
+        backgroundColor:"#ffffff",
+        transform: 'scale(1.1)',
+  }
+  }
 }));
 
 export default function SignUp() {
@@ -52,18 +86,50 @@ export default function SignUp() {
     Password: password,
     ConfirmPassword: confirmpassword
   }
+  const history = useHistory();
   const reset=()=>{
     setUsername("");
     setPassword("");
     setEmail("");
     setConfirmPassword("");
+    setNotify({
+        isOpen: true,
+        message: "Form Reset",
+        type: "info"
+        })  
+        setTimeout(() => {
+          setNotify({
+            isOpen: true,
+            message: "Please login to continue",
+            type: "info"
+         })
+        }, 3000);
+        setTimeout(() => {
+          history.push('/');
+        }, 6000);  
   }
   const registerUser = (e) =>{
     e.preventDefault();
     console.log("Testing API Successful")    
     axios.post("http://localhost:888/api/Account/Register",user).then(res=>{
-        console.log("test",res.data);     
+        console.log("test",res.data);
+        localStorage.setItem("Name",username);     
         reset(); 
+        setNotify({
+        isOpen: true,
+        message: "Successfully Registered",
+        type: "success"
+        })
+        setTimeout(() => {
+          setNotify({
+            isOpen: true,
+            message: "Please login to continue",
+            type: "info"
+         })
+        }, 3000);
+        setTimeout(() => {
+          history.push('/');
+        }, 6000);
     }).catch((e)=>
         setNotify({
         isOpen: true,
@@ -76,8 +142,8 @@ export default function SignUp() {
   );  
 }
   return (
-      <div> 
-        <Container component="main" maxWidth="xs">
+      <div style={ sectionStyle }> 
+        <Container component="main" maxWidth="xs" >
         <CssBaseline />
         <div className={classes.paper}>
             <Avatar className={classes.avatar}>
@@ -86,11 +152,11 @@ export default function SignUp() {
             <Typography component="h1" variant="h5">
             Sign up
             </Typography>
-            <form className={classes.form} onSubmit={registerUser} >
+            <form className={classes.form} onSubmit={registerUser} onReset={reset}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                 <TextField
-                    autoComplete="fullname"
+                    autoComplete="off"
                     name="fullName"
                     variant="outlined"
                     required
@@ -105,14 +171,13 @@ export default function SignUp() {
                 <Grid item xs={12}>
                 <TextField
                     variant="outlined"
+                    autoComplete="off"
                     required
                     fullWidth
                     id="email"
                     label="Email Address"
-                    name="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    autoComplete="email"
                 />
                 </Grid>
                 <Grid item xs={12}>
@@ -150,18 +215,35 @@ export default function SignUp() {
                 />
                 </Grid>
             </Grid>
-            <Button
+            <Grid container>
+            <Grid item xs ={5} className={classes.gridbtn}>
+                <Button
                 type="submit"
-                fullWidth
                 variant="contained"
+                fullWidth
                 color="primary"
-                className={classes.submit}
+                className={classes.signupbtn}
             >
                 Sign Up
             </Button>
+            </Grid>
+            <Grid item xs ={5} className={classes.gridbtn} >
+             <Button
+                type="reset"
+                variant="contained"
+                fullWidth
+                color="primary"
+                className={classes.resetbtn}
+            >
+              Reset
+            </Button>
+          </Grid>
+        </Grid>
+            
+           
             <Grid container justify="flex-end">
                 <Grid item>
-                <Link to="/Login" variant="body2">
+                <Link to="/" variant="body2">
                     Already have an account? Sign in
                 </Link>
                 </Grid>
