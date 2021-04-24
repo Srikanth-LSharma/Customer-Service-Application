@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import {NavLink} from "react-router-dom";
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import CustomerTicketsList from '../pages/customer/TicketList';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Navigation(props) {
   const classes = useStyles();
-
+  const role = localStorage.getItem("role");
   const history = useHistory();
 
   const handleClick=path=>{
@@ -61,6 +62,31 @@ function Navigation(props) {
     localStorage.clear()
     history.push(path);
   }
+
+  const Manager=()=>{
+    return(
+      <Button className = {classes.menuButton} component ={NavLink} to ="/Manager" > Manager Ticket List </Button>
+    )
+  }
+
+  const Reviewer=()=>{
+    return(
+    <Button className = {classes.menuButton} component ={NavLink} to ="/Reviewer" > Reviewer Ticket List </Button>
+    )  
+  }
+
+  const ServiceExec=()=>{
+    return(
+    <Button className = {classes.menuButton} component ={NavLink} to ="/ServiceExec" > Service Ticket List </Button>
+    )
+  }
+
+  const Customer=()=>{
+    return(
+      <Button className = {classes.menuButton} component ={NavLink} to ="/CustomerTickets" > Customer Ticket List </Button>
+    )
+  }
+
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appbar}>
@@ -68,9 +94,11 @@ function Navigation(props) {
           <Typography variant="h6" className={classes.title}>
             Customer Service
           </Typography>          
-          <Button className = {classes.menuButton} component ={NavLink} to ="/Home"> Home </Button >
           <Button className = {classes.menuButton} component ={NavLink} to ="/About"> About </Button >
-          <Button className = {classes.menuButton} component ={NavLink} to ="/Contact"> Contact </Button >
+          <Button className = {classes.menuButton} component ={NavLink} to ="/Contact" > Contact </Button >
+          {
+            role=="manager"? <Manager/>: role=="reviewer"? <Reviewer/> : role=="serviceexec"? <ServiceExec/> : role=="customer"? <Customer/>: null
+          }   
           <div className={classes.username}> {localStorage.getItem("userName")} </div>
           <Button onClick={() => {handleClick('/');}} color="inherit" className={classes.logout}><ExitToAppIcon/></Button>
         </Toolbar>

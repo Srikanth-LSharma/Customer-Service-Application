@@ -13,6 +13,7 @@ import ManagerTemplate from './pages/manager/ManagerTemplate';
 import ServiceExecView from './pages/serviceExec/ServiceExecView'
 import EmpTicketView from './pages/manager/EmpTicketView'
 import {ProtectedRoute} from './ProtectedRoutes';
+import Chat from './pages/customer/ChatWindow'
 
 
 
@@ -33,6 +34,7 @@ const LoginContainer = () => (
         <ProtectedRoute exact path = '/Manager' component ={ManagerTemplate}/>
         <ProtectedRoute exact path = '/ServiceExec' component ={ServiceExecView}/>
         <ProtectedRoute exact path = '/Reviewer' component ={EmpTicketView}/>
+        <Route exact path ='/Chat' component = {Chat}/>
       </div>
    )
 

@@ -10,8 +10,10 @@ import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import ConfirmDialog from "../../components/ConfirmDialog";
 import Client from '../../services/api/Client'
 import SnackBar from'../../components/SnackBar'
+import useFullPageLoader from '../../components/useFullPageLoader'
 import ChatIcon from '@material-ui/icons/Chat';
 import CircularProgress from "@material-ui/core/CircularProgress";
+import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
     pageContent: {
@@ -47,6 +49,11 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         alignItems: 'center', 
     },
+    loadericon:{
+        position:'absolute',
+        top:'230%',
+        right:'45%',
+    },
     root: {
         display: "flex",
         "& > * + *": {
@@ -60,8 +67,8 @@ const headCells = [
     { id: 'id', label: 'Ticket ID' },
     { id: 'name', label: 'Customer Name' },
     { id: 'date', label: 'Date' },
-    { id: 'serviceExId', label: 'ServiceExID' },
-    { id: 'reviewerId', label: 'ReviewerID' },
+    { id: 'ServiceEx', label: 'ServiceEx' },
+    { id: 'Reviewer', label: 'Reviewer' },
     { id: 'Product', label: 'Product' },
     { id: 'Priority', label: 'Priority' },
     { id: 'status', label: 'Status' },
@@ -78,7 +85,9 @@ export default function Employees() {
     const [openPopup, setOpenPopup] = useState(false)
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
     const [customerID ,setCustomerID] = useState("");
+    const [empdata,setEmpData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', subTitle: '' })
 
     const {
@@ -91,7 +100,10 @@ export default function Employees() {
     const displayTickets=()=>{
         let products= EmpTicketService.getProductCollection();
         let priorities = EmpTicketService.getPriorityCollection();
+        //let employees = EmpTicketService.getEmployeeCollection();
+        showLoader();
         Client.get("/api/EmpTickets").then(res=>{
+            hideLoader();
               setRecords(res.data.map(x => ({
                 ...x,
                 Product: products[x.ProductID - 1].title,
@@ -100,17 +112,9 @@ export default function Employees() {
             //console.log(res.data)
         })
           .catch((error) => {
+            hideLoader();
             console.log(error);
-          })
-          .finally(() => {
-            setTimeout(() => {
-              setLoading(false);
-            }, 1000);
           });
-    }
-
-    const getCustID=(custname)=>{
-        
     }
 
     const getTicketDetails=(id)=>{
@@ -122,14 +126,19 @@ export default function Employees() {
 
     useEffect(() => {
         displayTickets()
-      }, []);
-
+        axios.get("http://localhost:888/api/getEmployees").then(res=>{
+        setEmpData(res.data);
+        console.log("EmpData:",empdata);
+    }) .catch((error) => {
+        console.log(error);
+    })
+    }, []);
 
     const handleSearch = e => {
         let target = e.target;
         setFilterFn({
             fn: items => {
-                if (target.value === "")
+                if (target.value == "")
                     return items;
                 else
                     return items.filter(x => x.CustName.toLowerCase().includes(target.value.toLowerCase()))
@@ -140,7 +149,6 @@ export default function Employees() {
     const addOrEdit = (ticket, resetForm) => {
         console.log("ticketID:",ticket.TicketID)
         getTicketDetails(ticket.TicketID)
-        
         Client.get('/api/CustomerIdByName/'+ticket.CustName).then(res=>
         {
             setCustomerID(res.data)
@@ -160,21 +168,29 @@ export default function Employees() {
             response =>{
                 console.log("Ticket Edited");
                 displayTickets()
+                setNotify({
+                    isOpen: true,
+                    message: 'Submitted Successfully',
+                    type: 'success'
+                });
                    console.log("Accepted input",response.data)
-            }).catch((e)=>console.log(e))
-        }).catch((e)=>{
-            console.log(e)
-        });
+            }).catch((e)=>
+            setNotify({
+                isOpen: true,
+                message: e.Message,
+                type: 'error'
+            }))
+        }).catch((e)=>
+        setNotify({
+            isOpen: true,
+            message: e.Message,
+            type: 'error'
+        }));
         
          
         resetForm()
         setRecordForEdit(null)
-        setOpenPopup(false)
-        setNotify({
-            isOpen: true,
-            message: 'Submitted Successfully',
-            type: 'success'
-        });
+        setOpenPopup(false)        
         setTimeout(() => {
             setLoading(false);
           }, 2000);
@@ -200,7 +216,11 @@ export default function Employees() {
                         }}
                         onChange={handleSearch}
                     />
+                    <div className={classes.loadericon}>
+                         {loader}
+                    </div>
                 </Toolbar>
+                
                 <TblContainer>
                     <TblHead />
                     <TableBody>
@@ -221,7 +241,10 @@ export default function Employees() {
                                     <TableCell align='center'>
                                         <Controls.ActionButton
                                             color="primary"
-                                            onClick={() => { openInPopup(item) }}>
+                                            onClick={() => { 
+                                                openInPopup(item)                                                 
+                                                localStorage.setItem("status",item.Status);
+                                            }}>
                                             <EditOutlinedIcon fontSize="small" />
                                         </Controls.ActionButton>
                                         <Controls.ActionButton

@@ -15,6 +15,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import useFullPageLoader from '../../components/useFullPageLoader'
 import SnackBar from '../../components/SnackBar';
 import axios from 'axios';
 //import Login from '../components/login'
@@ -61,6 +62,11 @@ const useStyles = makeStyles((theme) => ({
         transform: 'scale(1.1)',
   }
   },
+  loadericon:{
+    position:'absolute',
+    top:'50%',
+    right:'45%',
+},
   resetbtn:{
     margin: theme.spacing(3, 2, 2),
     backgroundColor:"#ffffff",
@@ -79,6 +85,7 @@ export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmpassword, setConfirmPassword] = useState(''); 
+  const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [notify, setNotify] = useState({ isOpen: false, message: "", type: "" });
 
   const user={
@@ -97,7 +104,8 @@ export default function SignUp() {
         message: "Form Reset",
         type: "info"
         })  
-        setTimeout(() => {
+        {/*setTimeout(() => {
+          showLoader();
           setNotify({
             isOpen: true,
             message: "Please login to continue",
@@ -106,12 +114,14 @@ export default function SignUp() {
         }, 3000);
         setTimeout(() => {
           history.push('/');
-        }, 6000);  
+        }, 6000); */} 
   }
   const registerUser = (e) =>{
     e.preventDefault();
+    showLoader();
     console.log("Testing API Successful")    
     axios.post("http://localhost:888/api/Account/Register",user).then(res=>{
+        hideLoader();
         console.log("test",res.data);
         localStorage.setItem("Name",username);     
         reset(); 
@@ -121,6 +131,7 @@ export default function SignUp() {
         type: "success"
         })
         setTimeout(() => {
+          showLoader();
           setNotify({
             isOpen: true,
             message: "Please login to continue",
@@ -130,8 +141,9 @@ export default function SignUp() {
         setTimeout(() => {
           history.push('/');
         }, 6000);
-    }).catch((e)=>
-        setNotify({
+    }).catch((e)=>{
+      hideLoader();
+      setNotify({
         isOpen: true,
         message: e.response.request.response.split(':')[3].split('"')[1],
         type: "error",
@@ -139,6 +151,8 @@ export default function SignUp() {
        // for passwords do not match use this -->e.response.request.response.split(',')[1].split(':')[2].slice(2,-4)
        // for username already taken use this --> e.response.request.response.split(':')[3].split(',')[1].slice(1,-4)
   })
+    }
+        
   );  
 }
   return (
@@ -254,6 +268,9 @@ export default function SignUp() {
         </Box>
         </Container>
         <SnackBar notify={notify} setNotify={setNotify} />
+        <div className={classes.loadericon}>
+                         {loader}
+        </div>
       </div>
   );
 }

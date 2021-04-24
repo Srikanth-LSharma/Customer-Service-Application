@@ -1,8 +1,9 @@
-import React, { useEffect} from 'react'
+import React, { useEffect, useState} from 'react'
 import { Grid, } from '@material-ui/core';
 import Controls from "../../components/controls/Controls";
 import { useForm, Form } from '../../components/useForm';
 import * as EmpTicketService from "../../services/EmpTicketService";
+import axios from 'axios';
 
 //const dateDisplay = lazy(() => import("../../components/controls/Datedisplay"));
 const initialFValues = {
@@ -10,9 +11,9 @@ const initialFValues = {
     ServiceReqDate: '',
     CustName: '',
     ProductID: '',
-    ServiceExecId:'', 
-    ReviewerId:'',
-    PriorityId:'',
+    ServiceExecId:'2', 
+    ReviewerId:'3',
+    PriorityId:'3',
     comment:'',
     Status:'Open',
     Feedback:'',
@@ -20,7 +21,8 @@ const initialFValues = {
 
 export default function EmployeeForm(props) {
     const { addOrEdit, recordForEdit } = props
-
+    const [empdata,setEmpData] = useState([]);
+    
     const validate = (fieldValues = values) => {
         let temp = { ...errors }
         //if ('productId' in fieldValues)
@@ -58,37 +60,47 @@ export default function EmployeeForm(props) {
             })
     }, [recordForEdit])
 
+    useEffect(()=>{
+        axios.get("http://localhost:888/api/getEmployees").then(res=>{
+        setEmpData(res.data);
+        console.log("EmpData:",empdata);
+    }) .catch((error) => {
+        console.log(error);
+    })
+    },[])
+    
+    
     const date= new Date().toString();
     const index = date.lastIndexOf(':') +3;
 
     return (
         <Form onSubmit={handleSubmit}>
             <Grid container>
-                <Grid item xs={10} align='center'>
-                    <Controls.Input
-                        label="Service Exec ID"
+                <Grid item xs={12}>
+                    <Controls.Select
+                        label="Service Exec"
                         name="ServiceExecId"
                         value={values.ServiceExecId}
-                        onChange={handleInputChange}
+                        options={empdata}
+                        onChange={localStorage.getItem("status")=="Open"?handleInputChange:null}
                         error={errors.ServiceExecId}
                         align='center'
                     />
-                    <Controls.Input 
-                        label="Reviewer ID"
+                    <Controls.Select
+                        label="Reviewer"
                         name="ReviewerId"
+                        options={empdata}
                         value={values.ReviewerId}
-                        onChange={handleInputChange}
+                        onChange={localStorage.getItem("status")=="Open" && values.ReviewerId==0? handleInputChange: null}
                         error={errors.ReviewerId}
-                        align='center'
                     />
                     <Controls.Select
                         name="PriorityId"
                         label="Priority"
                         value={values.PriorityId}
                         options={EmpTicketService.getPriorityCollection()}
-                        onChange={handleInputChange}
+                        onChange={localStorage.getItem("status")=="Open"?handleInputChange:null}
                         error={errors.PriorityId}
-                        align='center'
                     />                 
                     <div>
                         <Controls.Button

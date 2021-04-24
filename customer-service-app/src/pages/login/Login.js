@@ -15,6 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 //import "../../node_modules/bootstrap/dist/css/bootstrap.css";
 import axios from 'axios';
+import useFullPageLoader from '../../components/useFullPageLoader'
 import CircularProgress from "@material-ui/core/CircularProgress";
 //import Signup from '../components/signup';
 
@@ -70,15 +71,14 @@ const KEYS = {
   const [role, setRole] = useState('');
   const [notify, setNotify] = useState({ isOpen: false, message: "", type: "" });
   const [loading, setLoading] = useState(false);
+  const [loader, showLoader, hideLoader] = useFullPageLoader();
   const grant_type="password";
   
   useEffect(()=>{
      let token = localStorage.getItem("access_token");
      let _role = localStorage.getItem("role");
      if(token!=null){
-       console.log("1")
        if(_role==="manager"){
-         console.log("manager test2")
          props.history.push('/Manager');
        }
        else if(_role==="reviewer"){
@@ -117,9 +117,10 @@ const KEYS = {
   
   const handleSubmit = (e) =>{ 
     e.preventDefault();
-    
+    showLoader();
     const loginText = "username="+username+"&password="+password+"&grant_type="+grant_type;   
     axios.post("http://localhost:888/token",loginText).then(response =>{
+            hideLoader();
             let expires = ".expires";
             console.log("Accepted input",response.data)
             console.log("Expiry date and time:",response.data[expires])
@@ -132,6 +133,14 @@ const KEYS = {
             const config = {
               headers: { Authorization: `Bearer ${token}` }
             };
+            const custdata={
+              CustName: localStorage.getItem("Name")
+            }
+            console.log("Data to be passed to Add customer",custdata)
+            axios.post("http://localhost:888/api/AddCustomer",custdata,config).then(res=>
+            {
+              console.log(res.data);
+            }).catch(e => {console.log(e)})
             axios.get("http://localhost:888/api/userRoles",config).then(res=>
               {
                 localStorage.setItem(KEYS.role,res.data);
@@ -150,12 +159,15 @@ const KEYS = {
               type: "success",
             })
            // let urls=roleRedirectingURL();           
-            }).catch((e)=>
-                 setNotify({
-                  isOpen: true,
-                  message: e.response.data.error_description,
-                  type: "error",
-            }));
+            }).catch((e)=>{
+              hideLoader();
+              setNotify({
+                isOpen: true,
+                message: e.response.data.error_description,
+                type: "error",
+          })
+        }
+    )
   }
 
   return (
@@ -223,11 +235,7 @@ const KEYS = {
             </Box>
           </form>          
         </div>
-        {loading === true && (
-                            <div className={classes.rootLoad}>
-                                 <CircularProgress />
-                            </div>
-                        )}
+        {loader}
       </Grid>  
       <SnackBar notify={notify} setNotify={setNotify} />    
     </Grid>

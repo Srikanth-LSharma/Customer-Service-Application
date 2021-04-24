@@ -31,6 +31,23 @@ export const getPriorityCollection = () => ([
     { id: '4', title:'Low'},
 ])
 
+export const getEmployeeCollection = () =>([
+    {
+        EmpID: '2', title: 'Hari'
+    },
+    {
+        EmpID: "3", title: "VishnuSree"
+    },
+    {
+        EmpID: "6", title: "Venkat"
+    },
+    {
+        EmpID: "7", title: "Vishak"
+    },
+    {
+        EmpID: "8", title: "Soumya"
+    }
+])
 
 export function updateTicket(data) {
     let employees = getAllTickets();

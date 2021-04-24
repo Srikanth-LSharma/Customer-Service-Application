@@ -9,6 +9,7 @@ import { Search } from "@material-ui/icons";
 import Client from '../../services/api/Client'
 import SnackBar from'../../components/SnackBar'
 import ChatIcon from '@material-ui/icons/Chat';
+import useFullPageLoader from '../../components/useFullPageLoader'
 
 const useStyles = makeStyles(theme => ({
     pageContent: {
@@ -21,6 +22,11 @@ const useStyles = makeStyles(theme => ({
     newButton: {
         position: 'absolute',
         right: '10px'
+    },
+    loadericon:{
+        position:'absolute',
+        top:'230%',
+        right:'45%',
     },
     statusCellOpen:{
         backgroundColor: 'red',
@@ -51,8 +57,6 @@ const headCells = [
     { id: 'id', label: 'Ticket ID' },
     { id: 'name', label: 'Customer Name' },
     { id: 'date', label: 'Date' },
-    { id: 'serviceExId', label: 'ServiceExID' },
-    { id: 'reviewerId', label: 'ReviewerID' },
     { id: 'Product', label: 'Product' },
     { id: 'Priority', label: 'Priority' },
     { id: 'status', label: 'Status' },
@@ -65,6 +69,7 @@ export default function Employees() {
     const [records, setRecords] = useState([])
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
    
 
     const {
@@ -75,9 +80,11 @@ export default function Employees() {
     } = useTable(records, headCells, filterFn);
 
     const displayTickets=()=>{
+        showLoader();
         let products= EmpTicketService.getProductCollection();
         let priorities = EmpTicketService.getPriorityCollection();
         Client.get("/api/TicketsServiceExec").then(res=>{
+                hideLoader();
               setRecords(res.data.map(x => ({
                 ...x,
                 Product: products[x.ProductID - 1].title,
@@ -87,6 +94,7 @@ export default function Employees() {
             console.log(res.data)
         })
           .catch((error) => {
+            hideLoader();
             console.log(error);
           })
     }
@@ -112,7 +120,7 @@ export default function Employees() {
         <>
             <PageHeader
                 title="Ticket List"
-                subTitle="Form design with validation"
+                subTitle="For Service Executive"
                 icon={<RateReviewTwoToneIcon fontSize="small" />}
             />
             <Paper className={classes.pageContent}>
@@ -128,6 +136,9 @@ export default function Employees() {
                         }}
                         onChange={handleSearch}
                     />
+                    <div className={classes.loadericon}>
+                         {loader}
+                    </div>
                 </Toolbar>
                 <TblContainer>
                     <TblHead />
@@ -136,10 +147,8 @@ export default function Employees() {
                             recordsAfterPagingAndSorting().map(item =>
                                 (<TableRow key={item.TicketID}>
                                     <TableCell align='center'>{item.TicketID}</TableCell>
-                                    <TableCell align='center'> {item.CustName}</TableCell>
-                                    <TableCell align='center'>{item.ServiceReqDate}</TableCell>
-                                    <TableCell align='center'>{item.ServiceExecId}</TableCell>
-                                    <TableCell align='center'>{item.ReviewerId}</TableCell>
+                                    <TableCell align='center'>{item.CustName}</TableCell>
+                                    <TableCell align='center'>{item.ServiceReqDate.split("T")[0]}</TableCell>
                                     <TableCell align='center'>{item.Product}</TableCell>
                                     <TableCell align='center'>{item.Priority}</TableCell>
                                     <TableCell align='center'>

@@ -77,7 +77,7 @@ export default function EmployeeForm(props) {
                         name="ProductID"
                         label="Product"
                         value={values.ProductID}
-                        onChange={handleInputChange}
+                        onChange={values.ProductID==0? handleInputChange: null}
                         options={CustTicketService.getProductCollection()}
                         error={errors.ProductID}
                     />
@@ -93,7 +93,7 @@ export default function EmployeeForm(props) {
                         name="Status"
                         label="Status"
                         value={values.Status}
-                        onChange={handleInputChange}
+                        onChange={localStorage.getItem("status")=="Open"?handleInputChange:null}
                         options={CustTicketService.getStatusCollection()}
                         error={errors.Status}
                     />
@@ -101,7 +101,7 @@ export default function EmployeeForm(props) {
                         label="Feedback"
                         name="feedback"
                         value={values.feedback}
-                        onChange={handleInputChange}
+                        onChange={values.feedback==""?handleInputChange:null}
                         error={errors.feedback}
                         disabled={values.Status==="Open"? true: false}
                     />

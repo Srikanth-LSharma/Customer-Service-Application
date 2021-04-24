@@ -165,12 +165,10 @@ export default function Dashboard(props) {
           <Typography variant="h6" className={classes.title}>
             Customer Service
           </Typography>          
-          <Button className = {classes.menuButton} component ={NavLink} to ="/Home"> Home </Button >
           <Button className = {classes.menuButton} component ={NavLink} to ="/About"> About </Button >
           <Button className = {classes.menuButton} component ={NavLink} to ="/Contact"> Contact </Button >
-          <Button className = {classes.menuButton} component ={NavLink} to ="/Manager"> Manager Portal </Button >
-          
-              <div className={classes.username}> {localStorage.getItem("userName")} </div>
+          <Button className = {classes.menuButton} component ={NavLink} to ="/Manager"> Manager Ticket List </Button >
+          <div className={classes.username}> {localStorage.getItem("userName")} </div>
           <Button onClick={() => {handleClick('/');}} color="inherit" className={classes.logout}><ExitToAppIcon/></Button>        </Toolbar>
       </AppBar>
       <Drawer

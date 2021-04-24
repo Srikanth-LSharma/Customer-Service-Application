@@ -48,10 +48,10 @@ function CustomerView() {
     <ThemeProvider theme={theme}>
       <div className={classes.custviewMain}>
         {/*<Header/>*/}         
-      <h1> Manager Portal </h1>   
+      <h1> {localStorage.getItem("role").toUpperCase()} PORTAL </h1>   
         <PageHeader
                 title="Ticket List"
-                subTitle="Manager's Portal"
+                subTitle="(editable)"
                 icon={<RateReviewTwoToneIcon fontSize="small" />}
             />
             <EmpTicketList/>

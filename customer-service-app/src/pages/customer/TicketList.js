@@ -7,6 +7,7 @@ import useTable from "../../components/useTable";
 import Controls from "../../components/controls/Controls";
 import { Search } from "@material-ui/icons";
 import AddIcon from '@material-ui/icons/Add';
+import useFullPageLoader from '../../components/useFullPageLoader'
 import Popup from "../../components/Popup";
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import ConfirmDialog from "../../components/ConfirmDialog";
@@ -25,6 +26,11 @@ const useStyles = makeStyles(theme => ({
     newButton: {
         position: 'absolute',
         right: '10px'
+    },
+    loadericon:{
+        position:'absolute',
+        top:'230%',
+        right:'45%',
     },
     statusCellOpen:{
         backgroundColor: 'red',
@@ -66,6 +72,7 @@ export default function CustomerTicketsList() {
     const [customerID ,setCustomerID] = useState("");
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', subTitle: '' })
     const [servID, setServID] = useState("");
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [revID, setRevID] = useState("");
     const [prioID, setPrioID] = useState("");
 
@@ -95,7 +102,9 @@ export default function CustomerTicketsList() {
 
     const displayTickets=()=>{
         let products = getProductCollection();
+        showLoader();
         Client.get("/api/CustomerTickets").then(res=>{
+                hideLoader();
               setRecords(res.data)
               setRecords(res.data.map(x => ({
                 ...x,
@@ -104,6 +113,7 @@ export default function CustomerTicketsList() {
             console.log(res.data)
         })
           .catch((error) => {
+            hideLoader();
             console.log(error);
           })
     }
@@ -117,7 +127,7 @@ export default function CustomerTicketsList() {
         let target = e.target;
         setFilterFn({
             fn: items => {
-                if (target.value === "")
+                if (target.value == "")
                     return items;
                 else
                     return items.filter(x => x.Product.toLowerCase().includes(target.value.toLowerCase()))
@@ -135,20 +145,32 @@ export default function CustomerTicketsList() {
 
     const addOrEdit = (ticket, resetForm) => {
         const data = {
-            ProdID: Number(ticket.ProductID)
+            ProdID: Number(ticket.ProductID),
+            PriorityID: 3
         };
-        if (ticket.TicketID === 0){      
+        if (ticket.TicketID == 0){      
             console.log("Ticket:",data);
+            showLoader();
             Client.post('/api/AddTicket',data).then(
                 response =>{
+                    hideLoader();
                     displayTickets()
                        console.log("Accepted input",response.data)
-                }).catch((e)=>console.log(e))
-            console.log("Test Addition");
+                       setNotify({
+                        isOpen: true,
+                        message: 'Submitted Successfully',
+                        type: 'success'
+                    })
+                }).catch((e)=>
+                setNotify({
+                    isOpen: true,
+                    message: e.Message,
+                    type: 'error'
+                }))
         }
             
         else{
-
+            showLoader();
             Client.get('/api/CustTicket/'+ticket.TicketID).then(
             response =>{
                    console.log("Ticket details:",response.data)
@@ -169,21 +191,36 @@ export default function CustomerTicketsList() {
                     }
                     Client.put('/api/EditCustTicket/'+editdata.TicketID,editdata).then(
                     response =>{
+                        hideLoader();
                         displayTickets()
                         console.log("Accepted input",response.data)
-                    }).catch((e)=>console.log(e))
-                    console.log("Ticket Edit Data:",editdata)
-                   console.log("servID:",servID,"revID:",revID,"PrioID",prioID)
-            }).catch((e)=>console.log(e))           
-            }            
+                        setNotify({
+                            isOpen: true,
+                            message: 'Submitted Successfully',
+                            type: 'success'
+                        })
+                    }).catch((e)=>{
+                        hideLoader();
+                        setNotify({
+                            isOpen: true,
+                            message: "Your ticket must be reviewed before it can be edited",
+                            type: 'error'
+                        })
+                    })
+                    //console.log("Ticket Edit Data:",editdata)
+                   //console.log("servID:",servID,"revID:",revID,"PrioID",prioID)
+            }).catch((e)=>{
+                hideLoader();
+                setNotify({
+                    isOpen: true,
+                    message: e.Message,
+                    type: 'error'
+                })
+            })          
+        }            
         resetForm()
         setRecordForEdit(null)
-        setOpenPopup(false)
-        setNotify({
-            isOpen: true,
-            message: 'Submitted Successfully',
-            type: 'success'
-        })
+        setOpenPopup(false)        
     }
 
     const openInPopup = item => {
@@ -225,6 +262,9 @@ export default function CustomerTicketsList() {
                         }}
                         onChange={handleSearch}
                     />
+                    <div className={classes.loadericon}>
+                         {loader}
+                    </div>
                     <Controls.Button
                         text="Add New"
                         variant="outlined"
@@ -244,13 +284,16 @@ export default function CustomerTicketsList() {
                                     <TableCell align='center'>{item.ServiceReqDate.split("T")[0]}</TableCell>                                   
                                     <TableCell align='center'>{item.Product}</TableCell>                                    
                                     <TableCell>
-                                        <div  align='center' className={item.Status==='Open'? classes.statusCellOpen : classes.statusCellClosed} >{item.Status} </div> 
+                                        <div  align='center' className={item.Status=='Open'? classes.statusCellOpen : classes.statusCellClosed} >{item.Status} </div> 
                                     </TableCell>
                                     <TableCell align='center'>{item.Feedback}</TableCell>
                                     <TableCell align='center'>
                                         <Controls.ActionButton
                                             color="primary"
-                                            onClick={() => { openInPopup(item) }}>
+                                            onClick={() => { 
+                                                openInPopup(item)
+                                                localStorage.setItem("status",item.Status);
+                                                 }}>
                                             <EditOutlinedIcon fontSize="small" />
                                         </Controls.ActionButton>
                                         {/*<Controls.ActionButton

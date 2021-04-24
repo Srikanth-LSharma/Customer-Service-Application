@@ -109,12 +109,14 @@ export function EmployeeTicketCount(props) {
   const classes = useStyles();
   const [etcount, setETCount] = useState('');
   const [empID, setEmpID] = useState('');
+  const [empCount, setEmpCount] = useState('');
 
   const handleChange = e=> setEmpID(e.target.value);
 
-    const empCount=window.localStorage.getItem('empcount');
+    //const empCount=localStorage.getItem('empcount');
     const createElements = () => {
       const elements = [];
+      console.log("Empcount=",empCount)
       for (var i=1; i <= empCount; i++) {
         elements.push(<MenuItem value={i}> {i} </MenuItem>)
       } 
@@ -122,6 +124,12 @@ export function EmployeeTicketCount(props) {
     }
     
   useEffect(()=>{
+    Client.get("/api/Manager/EmployeesCount").then(res=>{
+      setEmpCount(res.data);
+    }).catch((e)=>{
+      console.log(e)
+    });
+    
     const url='/api/Manager/EmployeeTicketCount?id='+empID;
     Client.get(url).then(res=>{
         setETCount(res.data);
