@@ -50,7 +50,7 @@ function CustomerView() {
       <h1> {localStorage.getItem("role").toUpperCase()} PORTAL </h1>   
         <PageHeader
                 title="Ticket List"
-                subTitle="(editable)"
+                subTitle="(Editable)"
                 icon={<RateReviewTwoToneIcon fontSize="small" />}
             />
             <EmpTicketList/>

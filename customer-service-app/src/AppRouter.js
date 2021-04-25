@@ -39,16 +39,29 @@ import NotFound from './pages/NotFound'
    )
 
 const AppRouter = (props)=>  {
+    let _role = localStorage.getItem("role");
          return(
                 <Switch>
                     <div className="App-Router">
                     {
-                        props.location.pathname=='/CustomerTickets' || props.location.pathname=='/Reviewer' || props.location.pathname=='/ServiceExec' || props.location.pathname=='/Contact' || props.location.pathname=='/About'? <Navbar/>:null
+                        (props.location.pathname=='/CustomerTickets' && _role=="customer") || (props.location.pathname=='/Reviewer' && _role=="reviewer") || (props.location.pathname=='/ServiceExec' && _role=="serviceexec") || props.location.pathname=='/Contact' || props.location.pathname=='/About'? <Navbar/>:null
                     }
                        {/* <Route exact component={LoginContainer}/>  */}
                         
-                        <Route exact component={DefaultContainer}/> 
-                         
+                       <Switch>
+                            <Route exact path="/" component={Login} />      
+                            <Route exact path="/Signup" component={Signup}/>
+                            <ProtectedRoute exact path = '/Home' component ={ _role=="manager"? Home: NotFound}/>
+                            <ProtectedRoute exact path = '/About' component ={About}/>
+                            <ProtectedRoute exact path = '/Contact' component ={Contact}/>
+                            <ProtectedRoute exact path = '/Dashboard' component ={ _role=="manager"? Dashboard: NotFound}/>
+                            <ProtectedRoute exact path = '/CustomerTickets' component = { _role=="customer"? Customer: NotFound}/>
+                            <ProtectedRoute exact path = '/Manager' component ={ _role=="manager"? ManagerTemplate: NotFound}/>
+                            <ProtectedRoute exact path = '/ServiceExec' component ={ _role=="serviceexec"? ServiceExecView: NotFound}/>
+                            <ProtectedRoute exact path = '/Reviewer' component ={ _role=="reviewer"? EmpTicketView: NotFound}/>
+                            <Route exact path ='/Chat' component = {Chat}/> 
+                            <Route path='*' component ={NotFound}/> 
+                        </Switch>
                     </div>
                 </Switch>
         )

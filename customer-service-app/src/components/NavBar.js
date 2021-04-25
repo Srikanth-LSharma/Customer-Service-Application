@@ -13,6 +13,7 @@ import Brightness7Icon from '@material-ui/icons/Brightness7';
 import Brightness3Icon from '@material-ui/icons/Brightness3';
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from '@material-ui/core/Tooltip';
+import logo from '../Assets/applogo1.png'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -55,9 +56,16 @@ buttonOnclick:{
       transform: 'scale(1.1)',
 }  
 },
-  title: {
-    flexGrow: 1,
-  },
+title: {
+  flexGrow: 1,
+  fontSize: 35,
+  paddingTop:4,
+  fontFamily: 'Bebas Neue',
+},
+logo: {
+  width: 62,
+  height: 62
+},
   username:{
     paddingRight:4,
     fontSize:14
@@ -130,9 +138,10 @@ function Navigation(props) {
     <div className={classes.root}>
       <AppBar position="static" className={classes.appbar}>
         <Toolbar>
+        <img src={logo} alt="Logo" className={classes. logo} />   
           <Typography variant="h6" className={classes.title}>
-            Customer Service
-          </Typography>        
+            Help Desk
+          </Typography>       
           <Button className = {location.pathname=="/About"? classes.buttonOnclick: classes.menuButton} component ={NavLink} to ="/About" > About </Button >
           <Button className = {location.pathname=="/Contact"? classes.buttonOnclick: classes.menuButton} component ={NavLink} to ="/Contact" > Contact </Button >
           {
