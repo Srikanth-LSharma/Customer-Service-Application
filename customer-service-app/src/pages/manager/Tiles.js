@@ -10,7 +10,7 @@ import {dateDisplay} from '../../components/controls/Datedisplay';
 import Client from '../../services/api/Client'
 
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme)=>({
   depositContext: {
     flex: 1,
     paddingTop:35,
@@ -26,7 +26,7 @@ const useStyles = makeStyles({
   formControl: {
     maxWidth:110,
   },
-});
+}));
 
 export function EmployeeCount(props) {
   const classes = useStyles();

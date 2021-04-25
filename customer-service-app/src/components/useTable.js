@@ -5,16 +5,17 @@ const useStyles = makeStyles(theme => ({
     table: {
         marginTop: theme.spacing(3),
         '& thead th': {
-            fontWeight: '600',
-            color: theme.palette.primary.main,
-            backgroundColor: theme.palette.primary.light,
+            fontWeight: '400',
+            size:10,
+            color: 'white',
+            backgroundColor: '#4975d2',
         },
         '& tbody td': {
-            fontWeight: '400',
-            
+            fontWeight: '400',            
         },
         '& tbody tr:hover': {
-            backgroundColor: '#fffbf2',
+            backgroundColor: '#b8b8d4',
+            color:'black',
             cursor: 'pointer',
         },
     },

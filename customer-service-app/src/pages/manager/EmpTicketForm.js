@@ -105,7 +105,8 @@ export default function EmployeeForm(props) {
                     <div>
                         <Controls.Button
                             type="submit"
-                            text="Submit" />
+                            text="Submit" 
+                            color="primary"/>
                     </div>
                 </Grid>
             </Grid>

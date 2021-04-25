@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect, useState} from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -11,17 +11,21 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import { useLocation } from 'react-router-dom'
 import { mainListItems} from './ListItems';
 import EmpTicketView from "./EmpTicketView";
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Button from '@material-ui/core/Button';
 import {NavLink , useHistory} from "react-router-dom";
+import Brightness7Icon from '@material-ui/icons/Brightness7';
+import Brightness3Icon from '@material-ui/icons/Brightness3';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
+    display: 'flex',  
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -34,8 +38,8 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
   },
   appBar: {
-    backgroundColor: '#e1e3f2',
-    color: '#474f7e',
+    backgroundColor: '#3F51B5',
+    color: 'white',
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
@@ -83,6 +87,10 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
   },
+  icon:{
+    flexGrow:0.05,
+    marginRight:10
+  },
   paper: {
     padding: theme.spacing(2),
     display: 'flex',
@@ -94,17 +102,31 @@ const useStyles = makeStyles((theme) => ({
   },
   menuButton: {
     marginRight: theme.spacing(4),
-    backgroundColor: '#e1e3f2',    
+    backgroundColor: '#3F51B5',    
     fontSize:14,
     fontWeight:'500',    
     flexGrow: 0.4,
     transition: 'transform easeIn 1s',
-    color: '#474f7e',
+    color: 'white',
       '&:hover': {
         backgroundColor: '#fff',
         color: '#3c52b2',
         transform: 'scale(1.1)',
-  }
+  }  
+},
+buttonOnclick:{
+  marginRight: theme.spacing(4),
+    backgroundColor: '#fff',   
+    color: '#3c52b2', 
+    fontSize:14,
+    fontWeight:'500',    
+    flexGrow: 0.4,
+    transition: 'transform easeIn 1s',
+    '&:hover': {
+      backgroundColor: '#fff',
+      color: '#3c52b2',
+      transform: 'scale(1.1)',
+}  
 },
   listButton: {
     marginRight: 36,
@@ -118,21 +140,34 @@ const useStyles = makeStyles((theme) => ({
     fontSize:14
   },
   logout: {
-    color: '#474f7e',
+    color: 'white',
     transition: 'transform easeIn 1s',
     '&:hover': {
       backgroundColor: '#fff',
       color: '#3c52b2',
       transform: 'scale(1.1)',
     }
-  },
+  }
 }));
 
 export default function Dashboard(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const history = useHistory();
+  const [theme, setTheme]= useState(true);
+  const location = useLocation();
 
+  const toggleChange =()=>{
+   setTheme(JSON.parse(localStorage.getItem("theme")));
+   setTheme(!theme);
+   localStorage.setItem("theme",theme);
+   console.log(theme);
+  }
+  var icon = theme==false? <Brightness3Icon/> :  <Brightness7Icon/>
+
+  useEffect(()=>{
+    icon = theme==false? <Brightness3Icon/> :  <Brightness7Icon/>
+  })
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -160,16 +195,31 @@ export default function Dashboard(props) {
             onClick={handleDrawerOpen}
             className={clsx(classes.listButton, open && classes.menuButtonHidden)}
           >
-            <MenuIcon />
+            <Tooltip title="More Features" fontSize='50px' arrow>
+                
+               <MenuIcon />
+            </Tooltip>
           </IconButton>
           <Typography variant="h6" className={classes.title}>
             Customer Service
           </Typography>          
-          <Button className = {classes.menuButton} component ={NavLink} to ="/About"> About </Button >
-          <Button className = {classes.menuButton} component ={NavLink} to ="/Contact"> Contact </Button >
-          <Button className = {classes.menuButton} component ={NavLink} to ="/Manager"> Manager Ticket List </Button >
+          <Button className = {location.pathname=="/About"? classes.buttonOnclick: classes.menuButton} component ={NavLink} to ="/About"> About </Button >
+          <Button className = {location.pathname=="/Contact"? classes.buttonOnclick: classes.menuButton} component ={NavLink} to ="/Contact"> Contact </Button >
+          <Button className = {location.pathname=="/Manager"? classes.buttonOnclick: classes.menuButton} component ={NavLink} to ="/Manager"> Manager Ticket List </Button >
+          {/* <IconButton
+            className={classes.icon}
+            color="inherit"
+            aria-label="mode"
+            onClick={toggleChange}>      
+            {icon}
+          </IconButton>  */}
           <div className={classes.username}> {localStorage.getItem("userName")} </div>
-          <Button onClick={() => {handleClick('/');}} color="inherit" className={classes.logout}><ExitToAppIcon/></Button>        </Toolbar>
+          <Button onClick={() => {handleClick('/');}} color="inherit" className={classes.logout}>
+          <Tooltip title="Logout" fontSize='50px' arrow>
+                <ExitToAppIcon />
+            </Tooltip>
+          </Button>   
+          </Toolbar>
       </AppBar>
       <Drawer
         variant="permanent"

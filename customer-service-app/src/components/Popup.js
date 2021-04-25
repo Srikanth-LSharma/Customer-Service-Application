@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
     },
     dialogTitle: {
         paddingRight: '0px'
-    }
+    },    
 }))
 
 export default function Popup(props) {
@@ -26,8 +26,8 @@ export default function Popup(props) {
                     <Typography variant="h6" component="div" style={{ flexGrow: 1 }}>
                         {title}
                     </Typography>
-                    <Controls.ActionButton
-                        color="secondary"
+                    <Controls.ActionButton 
+                        color='close' 
                         onClick={()=>{setOpenPopup(false)}}>
                         <CloseIcon />
                     </Controls.ActionButton>

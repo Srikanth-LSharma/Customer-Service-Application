@@ -108,10 +108,11 @@ export default function EmployeeForm(props) {
                     <div>
                         <Controls.Button
                             type="submit"
-                            text="Submit" />
+                            text="Submit"
+                            color="primary"/>
                         <Controls.Button
                             text="Reset"
-                            color="default"
+                            color="resetbtn"
                             onClick={resetForm} />
                     </div>
                 </Grid>

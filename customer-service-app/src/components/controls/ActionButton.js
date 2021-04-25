@@ -14,11 +14,25 @@ const useStyles = makeStyles(theme => ({
         }
     },
     primary: {
-        backgroundColor: theme.palette.primary.light,
-        '& .MuiButton-label': {
-            color: theme.palette.primary.main,
+        backgroundColor: '#4975d2',
+        color: 'white',
+        '&:hover': {
+            backgroundColor: 'white',
+            color: '#4975d2',
+            transform: 'scale(1.02)'
         }
+       
     },
+    close:{
+        color:'white',
+        backgroundColor:'red',
+        border: '1px solid red',
+        '&:hover': {
+            backgroundColor: 'white',
+            color: 'red',
+            transform: 'scale(1.02)'
+        }
+    },    
 }))
 
 export default function ActionButton(props) {

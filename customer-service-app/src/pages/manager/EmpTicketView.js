@@ -45,7 +45,6 @@ function CustomerView() {
   const classes = useStyles();
 
   return (
-    <ThemeProvider theme={theme}>
       <div className={classes.custviewMain}>
         {/*<Header/>*/}         
       <h1> {localStorage.getItem("role").toUpperCase()} PORTAL </h1>   
@@ -55,9 +54,9 @@ function CustomerView() {
                 icon={<RateReviewTwoToneIcon fontSize="small" />}
             />
             <EmpTicketList/>
+            
+        <CssBaseline/>
       </div>
-      <CssBaseline />
-    </ThemeProvider>
   );
 }
 

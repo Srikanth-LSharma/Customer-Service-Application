@@ -12,6 +12,8 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import RateReviewTwoToneIcon from '@material-ui/icons/RateReviewTwoTone';
 import {NavLink} from "react-router-dom";
 
+import Tooltip from '@material-ui/core/Tooltip';
+
 const eventHandler=()=>{
   console.log("Clicked");
 }
@@ -19,33 +21,19 @@ export const mainListItems = (
   <div>
     <ListItem button  component ={NavLink} to ="/Dashboard">
       <ListItemIcon>
+      <Tooltip title="Dashboard" fontSize='50px' arrow>
         <DashboardIcon />
+      </Tooltip>
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItem>
     <ListItem button  component ={NavLink} to ="/Manager">
       <ListItemIcon>
+      <Tooltip title="View All Tickets" fontSize='50px' arrow>
         <RateReviewTwoToneIcon />
+        </Tooltip>
       </ListItemIcon>
       <ListItemText primary="Service Tickets" />
-    </ListItem>
-    <ListItem button onClick={eventHandler}>
-      <ListItemIcon>
-        <PeopleIcon />
-      </ListItemIcon>
-      <ListItemText primary="Customers" />
-    </ListItem>
-    <ListItem button onClick={eventHandler}>
-      <ListItemIcon>
-        <BarChartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Reports" />
-    </ListItem>
-    <ListItem button onClick={eventHandler}>
-      <ListItemIcon>
-        <LayersIcon />
-      </ListItemIcon>
-      <ListItemText primary="Integrations" />
     </ListItem>
   </div>
 );

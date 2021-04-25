@@ -14,6 +14,7 @@ import useFullPageLoader from '../../components/useFullPageLoader'
 import ChatIcon from '@material-ui/icons/Chat';
 import CircularProgress from "@material-ui/core/CircularProgress";
 import axios from 'axios';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const useStyles = makeStyles(theme => ({
     pageContent: {
@@ -33,10 +34,7 @@ const useStyles = makeStyles(theme => ({
         color:'white',
         fontSize:18,
         minHeight:30,
-        maxWidth:50,  
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center', 
+        maxWidth:80,  
     },
     statusCellClosed:{
         backgroundColor: 'green',
@@ -44,10 +42,7 @@ const useStyles = makeStyles(theme => ({
         color:'white',
         fontSize:18,
         minHeight:30,
-        maxWidth:60,  
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center', 
+        maxWidth:80,  
     },
     loadericon:{
         position:'absolute',
@@ -240,16 +235,20 @@ export default function Employees() {
                                     <TableCell align='center'>{item.Feedback===null? 'Nil':item.Feedback}</TableCell>
                                     <TableCell align='center'>
                                         <Controls.ActionButton
-                                            color="primary"
+                                        color='primary'                        
                                             onClick={() => { 
                                                 openInPopup(item)                                                 
                                                 localStorage.setItem("status",item.Status);
                                             }}>
-                                            <EditOutlinedIcon fontSize="small" />
+                                            <Tooltip title="Edit ticket" >
+                                                    <EditOutlinedIcon fontSize="small" />
+                                                 </Tooltip>
                                         </Controls.ActionButton>
                                         <Controls.ActionButton
                                             color="primary" >
-                                            <ChatIcon fontSize="small" />
+                                            <Tooltip title="Chat Window " >
+                                                     <ChatIcon fontSize="small" />
+                                                </Tooltip>
                                         </Controls.ActionButton>
                                     </TableCell>
                                 </TableRow>)

@@ -8,6 +8,24 @@ const useStyles = makeStyles(theme => ({
     },
     label: {
         textTransform: 'none'
+    },
+    primary: {
+        backgroundColor: theme.palette.primary.dark,
+        color: 'white',
+        '&:hover': {
+            backgroundColor: 'white',
+            color: theme.palette.primary.dark,            
+            transform: 'scale(1.02)'
+        } 
+    },
+    resetbtn:{
+        backgroundColor:"#ffffff",
+        color: '#3330c9',
+          '&:hover': {
+            color:'#e01f33',
+            backgroundColor:"#ffffff",
+            transform: 'scale(1.1)',
+      }
     }
 }))
 
@@ -20,8 +38,8 @@ export default function Button(props) {
         <MuiButton
             variant={variant || "contained"}
             size={size || "large"}
-            color={color || "primary"}
             onClick={onClick}
+            className={`${classes[color]}`}
             {...other}
             classes={{ root: classes.root, label: classes.label }}>
             {text}

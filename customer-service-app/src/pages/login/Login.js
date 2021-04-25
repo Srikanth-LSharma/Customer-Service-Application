@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import Link1 from '@material-ui/core/Link';
-import {Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -39,7 +39,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundPosition: 'center',
   },
   paper: {
-    margin: theme.spacing(8, 4),
+    margin: theme.spacing(0, 4),
+    marginTop: theme.spacing(16),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -55,6 +56,14 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  forgotpasstext: {
+    float:'left',    
+    color:'#4f65e2'
+  },
+  textright: {
+    float:'right',
+    color:'#4f65e2'
+  }
 }));
 
 const KEYS = {
@@ -118,6 +127,9 @@ const KEYS = {
   const handleSubmit = (e) =>{ 
     e.preventDefault();
     showLoader();
+    setTimeout(() => {
+      setLoading(false);
+    }, 5000);
     const loginText = "username="+username+"&password="+password+"&grant_type="+grant_type;   
     axios.post("http://localhost:888/token",loginText).then(response =>{
             hideLoader();
@@ -219,23 +231,17 @@ const KEYS = {
             >
               Sign In
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link1 href="/forgotPassword" variant="body2">
+                <Link1 href="/" variant="body2" className={classes.forgotpasstext}>
                   Forgot password?
                 </Link1>
-              </Grid>
-              <Grid item>
-                <Link to="/Signup" variant="body2">
+                <Link to="/Signup" variant="body2" className={classes.textright}>
                   {"Don't have an account? Sign Up"}
                 </Link>
-              </Grid>
-            </Grid>
             <Box mt={5}>
             </Box>
           </form>          
-        </div>
-        {loader}
+        </div>         
+          {loader}
       </Grid>  
       <SnackBar notify={notify} setNotify={setNotify} />    
     </Grid>

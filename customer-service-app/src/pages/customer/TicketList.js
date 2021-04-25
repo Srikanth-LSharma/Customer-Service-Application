@@ -14,6 +14,19 @@ import ConfirmDialog from "../../components/ConfirmDialog";
 import Client from '../../services/api/Client'
 import SnackBar from'../../components/SnackBar'
 import ChatIcon from '@material-ui/icons/Chat';
+import DarkTheme,{createTheme} from 'react-dark-theme'
+import Tooltip from '@material-ui/core/Tooltip';
+
+const lightTheme = {
+    background: '#c5cae965',
+    text:'black'
+  }
+   
+  const darkTheme = {
+    background: '#424040',
+    text: '#FFFFFF',
+  }
+  const myTheme = createTheme(darkTheme, lightTheme)
 
 const useStyles = makeStyles(theme => ({
     pageContent: {
@@ -47,6 +60,9 @@ const useStyles = makeStyles(theme => ({
         fontSize:18,
         minHeight:30,
         maxWidth:80,  
+    },
+    outerdiv:{        
+        margin: theme.spacing(0),
     },
 }))
 
@@ -161,12 +177,14 @@ export default function CustomerTicketsList() {
                         message: 'Submitted Successfully',
                         type: 'success'
                     })
-                }).catch((e)=>
-                setNotify({
+                }).catch((e)=>{
+                    hideLoader();
+                    setNotify({
                     isOpen: true,
                     message: e.Message,
                     type: 'error'
-                }))
+                })
+                })
         }
             
         else{
@@ -243,7 +261,7 @@ export default function CustomerTicketsList() {
     }*/}
 
     return (
-        <>
+        <div className={classes.outerdiv}>
             <PageHeader
                 title="Ticket List"
                 subTitle="Form design with validation"
@@ -251,7 +269,7 @@ export default function CustomerTicketsList() {
             />
             <Paper className={classes.pageContent}>
 
-                <Toolbar>
+                <Toolbar >
                     <Controls.Input
                         label="Search Product"
                         className={classes.searchInput}
@@ -265,13 +283,13 @@ export default function CustomerTicketsList() {
                     <div className={classes.loadericon}>
                          {loader}
                     </div>
-                    <Controls.Button
-                        text="Add New"
-                        variant="outlined"
-                        startIcon={<AddIcon />}
-                        className={classes.newButton}
-                        onClick={() => { setOpenPopup(true); setRecordForEdit(null); }}
-                    />
+                        <Controls.Button
+                            text="Add New"
+                            variant="outlined"
+                            startIcon={<AddIcon />}
+                            className={classes.newButton}
+                            onClick={() => { setOpenPopup(true); setRecordForEdit(null); }}
+                        />
                 </Toolbar>
                 <TblContainer>
                     <TblHead/>
@@ -288,14 +306,17 @@ export default function CustomerTicketsList() {
                                     </TableCell>
                                     <TableCell align='center'>{item.Feedback}</TableCell>
                                     <TableCell align='center'>
+                                    
                                         <Controls.ActionButton
                                             color="primary"
                                             onClick={() => { 
                                                 openInPopup(item)
                                                 localStorage.setItem("status",item.Status);
                                                  }}>
-                                            <EditOutlinedIcon fontSize="small" />
-                                        </Controls.ActionButton>
+                                                 <Tooltip title="Edit ticket" aria-label="add">
+                                                    <EditOutlinedIcon fontSize="small" />
+                                                 </Tooltip>
+                                            </Controls.ActionButton>
                                         {/*<Controls.ActionButton
                                             color="secondary"
                                             onClick={() => {
@@ -310,7 +331,9 @@ export default function CustomerTicketsList() {
                                         </Controls.ActionButton>*/}
                                         <Controls.ActionButton
                                             color="primary" >
-                                            <ChatIcon fontSize="small" />
+                                                <Tooltip title="Chat Window " aria-label="add">
+                                                     <ChatIcon fontSize="small" />
+                                                </Tooltip>
                                         </Controls.ActionButton>
                                     </TableCell>
                                 </TableRow>)
@@ -334,6 +357,6 @@ export default function CustomerTicketsList() {
                 setConfirmDialog={setConfirmDialog}
             />
             <SnackBar notify={notify} setNotify={setNotify} />
-        </>
+        </div>
     )
 }
