@@ -8,10 +8,23 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing(0.5)
     },
     secondary: {
-        backgroundColor: theme.palette.secondary.light,
-        '& .MuiButton-label': {
-            color: theme.palette.secondary.main,
+        backgroundColor: '#506f6c',
+        color: 'white',
+        '&:hover': {
+            backgroundColor: '#white',
+            color: '#506f6c',
+            transform: 'scale(1.02)'
         }
+       
+    },
+    chat: {
+        backgroundColor: '#789be4',
+        color: 'white',
+        '&:hover': {
+            backgroundColor: 'white',
+            color: '#789be4',
+            transform: 'scale(1.02)'
+        }       
     },
     primary: {
         backgroundColor: '#4975d2',
@@ -32,7 +45,16 @@ const useStyles = makeStyles(theme => ({
             color: 'red',
             transform: 'scale(1.02)'
         }
-    },    
+    },  
+    add:{
+        color:'white',
+        backgroundColor:'#00000000',
+        transition: '0.1s',
+        '&:hover': {
+           backgroundColor:'#00000000',
+           transform: 'scale(1.2)'
+        }
+    },  
 }))
 
 export default function ActionButton(props) {

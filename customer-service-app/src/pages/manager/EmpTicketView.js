@@ -41,7 +41,7 @@ const useStyles = makeStyles({
   }
 })
 
-function CustomerView() {
+function EmployeeView() {
   const classes = useStyles();
 
   return (
@@ -60,4 +60,4 @@ function CustomerView() {
   );
 }
 
-export default CustomerView;
+export default EmployeeView;

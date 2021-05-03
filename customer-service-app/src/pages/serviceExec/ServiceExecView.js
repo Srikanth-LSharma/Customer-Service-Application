@@ -43,12 +43,10 @@ function CustomerView() {
   const classes = useStyles();
 
   return (
-    <ThemeProvider theme={theme}>
       <div className={classes.custviewMain}> 
-            <ServiceExecList/>
+            <ServiceExecList/>            
+      <CssBaseline/>
       </div>
-      <CssBaseline />
-    </ThemeProvider>
   );
 }
 

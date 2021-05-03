@@ -9,7 +9,7 @@ const initialFValues = {
     TicketID: 0,
     date: '',
     Custname: '',
-    ProductID: 0,
+    ProductID: '',
     serviceExId:'', 
     reviewerId:'',
     priorityId:'',
@@ -24,7 +24,7 @@ export default function EmployeeForm(props) {
     const validate = (fieldValues = values) => {
         let temp = { ...errors }
         if ('ProductID' in fieldValues)
-            temp.ProductID = fieldValues.ProductID.length !== 0 ? "" : "This field is required."
+            temp.ProductID = fieldValues.ProductID.length !== 0 ? "" : "Please choose a product to proceed."
         if ('Status' in fieldValues)
             temp.Status = fieldValues.Status.length !== 0 ? "" : "This field is required."
         setErrors({

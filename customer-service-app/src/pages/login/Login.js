@@ -128,7 +128,18 @@ const KEYS = {
     e.preventDefault();
     showLoader();
     setTimeout(() => {
-      setLoading(false);
+      setNotify({
+        isOpen: true,
+        message: "Just a moment-- we're getting things ready for you...",
+        type: "info",
+      })
+    }, 2000);
+    setTimeout(() => {
+      setNotify({
+        isOpen: true,
+        message: "Almost done..",
+        type: "info",
+      })
     }, 5000);
     const loginText = "username="+username+"&password="+password+"&grant_type="+grant_type;   
     axios.post("http://localhost:888/token",loginText).then(response =>{
@@ -160,11 +171,6 @@ const KEYS = {
                 setRole(res.data);
                 console.log("Role: ",res.data);              
              }).catch(e => {console.log(e)})
-             .finally(() => {
-              setTimeout(() => {
-                setLoading(false);
-              }, 1000);
-            });
             setNotify({
               isOpen: true,
               message: "Login Successful",

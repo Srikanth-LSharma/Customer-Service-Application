@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Table, TableHead, TableRow, TableCell, makeStyles, TablePagination, TableSortLabel } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
-    table: {
+    tabledark: {
         marginTop: theme.spacing(3),
         '& thead th': {
             fontWeight: '400',
@@ -14,7 +14,24 @@ const useStyles = makeStyles(theme => ({
             fontWeight: '400',            
         },
         '& tbody tr:hover': {
-            backgroundColor: '#b8b8d4',
+            backgroundColor: '#4E4F5A',
+            color:'white',
+            cursor: 'pointer',
+        },
+    },
+    tablelight: {
+        marginTop: theme.spacing(3),
+        '& thead th': {
+            fontWeight: '500',
+            size:10,
+            color: '#333996',
+            backgroundColor: '#3c44b126',
+        },
+        '& tbody td': {
+            fontWeight: '400',            
+        },
+        '& tbody tr:hover': {
+            backgroundColor: '#fffbf2',
             color:'black',
             cursor: 'pointer',
         },
@@ -32,7 +49,7 @@ export default function useTable(records, headCells,filterFn) {
     const [orderBy, setOrderBy] = useState()
 
     const TblContainer = props => (
-        <Table className={classes.table}>
+        <Table className={localStorage.getItem("theme")=="false"? classes.tabledark : classes.tablelight}>
             {props.children}
         </Table>
     )

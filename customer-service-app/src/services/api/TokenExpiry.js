@@ -1,8 +1,7 @@
 import React,{useState} from 'react';
 import {  useHistory } from 'react-router-dom';
-import SnackBar from'../../components/SnackBar'
 
-export function CheckExpiry(props){
+export default function CheckExpiry(props){
     const expiry = localStorage.getItem("expiry");
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
     const history = useHistory();
@@ -17,12 +16,7 @@ export function CheckExpiry(props){
             message: 'Session has expired please re-login to proceed',
             type: 'error'
         })
-      }, 1000);      
+      }, 1500);      
       history.push("/");
     }
-    return(
-        <>
-            <SnackBar notify={notify} setNotify={setNotify} />
-        </>
-    )
   }

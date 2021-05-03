@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#3F51B5',    
     fontSize:14,
     fontWeight:'500',    
-    flexGrow: 0.4,
+    flexGrow: 0.3,
     transition: 'transform easeIn 1s',
     color: 'white',
       '&:hover': {
@@ -57,18 +57,21 @@ buttonOnclick:{
 }  
 },
 title: {
-  flexGrow: 1,
+  flexGrow: 0.2,
   fontSize: 35,
   paddingTop:4,
+  marginRight:134,
   fontFamily: 'Bebas Neue',
 },
 logo: {
-  width: 62,
-  height: 62
+  width: 50,
+  height: 50,
+  marginLeft: 60,
 },
   username:{
-    paddingRight:4,
-    fontSize:14
+    paddingRight:10,
+    fontSize:14,
+    marginLeft: 24
   },
   logout: {
     color: 'white',
@@ -138,7 +141,7 @@ function Navigation(props) {
     <div className={classes.root}>
       <AppBar position="static" className={classes.appbar}>
         <Toolbar>
-        <img src={logo} alt="Logo" className={classes. logo} />   
+        <img src={logo} alt="Logo" className={classes.logo} />   
           <Typography variant="h6" className={classes.title}>
             Help Desk
           </Typography>       

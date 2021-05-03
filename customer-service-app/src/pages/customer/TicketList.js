@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import TicketForm from "./TicketForm";
+import {  useHistory } from 'react-router-dom';
 import PageHeader from "../../components/PageHeader";
 import RateReviewTwoToneIcon from '@material-ui/icons/RateReviewTwoTone';
 import { Paper, makeStyles, TableBody, TableRow, TableCell, Toolbar, InputAdornment } from '@material-ui/core';
@@ -30,7 +31,8 @@ const lightTheme = {
 
 const useStyles = makeStyles(theme => ({
     pageContent: {
-        margin: theme.spacing(1),
+        margin: theme.spacing(0),
+        marginRight: theme.spacing(1),
         padding: theme.spacing(3)
     },
     searchInput: {
@@ -80,6 +82,7 @@ const headCells = [
 export default function CustomerTicketsList() {
 
     const classes = useStyles();
+    const history = useHistory();
     const [recordForEdit, setRecordForEdit] = useState(null)
     const [records, setRecords] = useState([])
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
@@ -128,9 +131,26 @@ export default function CustomerTicketsList() {
               })))
             console.log(res.data)
         })
-          .catch((error) => {
+          .catch((e) => {
             hideLoader();
-            console.log(error);
+            if(e.Message=="Authorization has been denied for this request."){
+                setNotify({
+                    isOpen: true,
+                    message: "Sorry! Session expired",
+                    type: 'info'
+                })
+                setTimeout(() => {
+                    setNotify({
+                      isOpen: true,
+                      message: "Please login again to continue..",
+                      type: "info",
+                    })
+                  }, 2000);
+                  setTimeout(() => {                       
+                    localStorage.clear();
+                    history.push('/');
+                  }, 4000);
+            }
           })
     }
 
@@ -180,10 +200,28 @@ export default function CustomerTicketsList() {
                 }).catch((e)=>{
                     hideLoader();
                     setNotify({
-                    isOpen: true,
-                    message: e.Message,
-                    type: 'error'
-                })
+                        isOpen: true,
+                        message: e.Message,
+                        type: 'error'
+                    })
+                    if(e.Message=="Authorization has been denied for this request."){
+                        setNotify({
+                            isOpen: true,
+                            message: "Sorry! Session expired",
+                            type: 'info'
+                        })
+                        setTimeout(() => {
+                            setNotify({
+                              isOpen: true,
+                              message: "Please login again to continue..",
+                              type: "info",
+                            })
+                          }, 2000);
+                          setTimeout(() => {                       
+                            localStorage.clear();
+                            history.push('/');
+                          }, 4000);
+                    }
                 })
         }
             
@@ -234,6 +272,24 @@ export default function CustomerTicketsList() {
                     message: e.Message,
                     type: 'error'
                 })
+                if(e.Message=="Authorization has been denied for this request."){
+                    setNotify({
+                        isOpen: true,
+                        message: "Sorry! Session expired",
+                        type: 'info'
+                    })
+                    setTimeout(() => {
+                        setNotify({
+                          isOpen: true,
+                          message: "Please login again to continue..",
+                          type: "info",
+                        })
+                      }, 2000);
+                      setTimeout(() => {                       
+                        localStorage.clear();
+                        history.push('/');
+                      }, 4000);
+                }
             })          
         }            
         resetForm()
@@ -244,6 +300,10 @@ export default function CustomerTicketsList() {
     const openInPopup = item => {
         setRecordForEdit(item)
         setOpenPopup(true)
+    }
+
+    const openChat = () =>{
+        
     }
 
     {/*const onDelete = id => {
@@ -265,7 +325,7 @@ export default function CustomerTicketsList() {
             <PageHeader
                 title="Ticket List"
                 subTitle="Form design with validation"
-                icon={<RateReviewTwoToneIcon fontSize="small" />}
+                icon={<RateReviewTwoToneIcon fontSize="medium" />}
             />
             <Paper className={classes.pageContent}>
 
@@ -299,7 +359,7 @@ export default function CustomerTicketsList() {
                                 (<TableRow key={item.TicketID}>
                                     <TableCell align='center'>{item.TicketID}</TableCell>
                                     <TableCell align='center'>{item.CustName}</TableCell>
-                                    <TableCell align='center'>{item.ServiceReqDate.split("T")[0]}</TableCell>                                   
+                                    <TableCell align='center'>{item.ServiceReqDate.split("T")[0].split("-").reverse().join("-")}</TableCell>                                   
                                     <TableCell align='center'>{item.Product}</TableCell>                                    
                                     <TableCell>
                                         <div  align='center' className={item.Status=='Open'? classes.statusCellOpen : classes.statusCellClosed} >{item.Status} </div> 
@@ -308,7 +368,7 @@ export default function CustomerTicketsList() {
                                     <TableCell align='center'>
                                     
                                         <Controls.ActionButton
-                                            color="primary"
+                                            color="secondary"
                                             onClick={() => { 
                                                 openInPopup(item)
                                                 localStorage.setItem("status",item.Status);
@@ -330,7 +390,11 @@ export default function CustomerTicketsList() {
                                             <CloseIcon fontSize="small" />
                                         </Controls.ActionButton>*/}
                                         <Controls.ActionButton
-                                            color="primary" >
+                                            color="chat" 
+                                            onClick={() => {                                               
+                                                localStorage.setItem("ticketID",item.TicketID);
+                                                history.push('/Chat');
+                                            }}>
                                                 <Tooltip title="Chat Window " aria-label="add">
                                                      <ChatIcon fontSize="small" />
                                                 </Tooltip>

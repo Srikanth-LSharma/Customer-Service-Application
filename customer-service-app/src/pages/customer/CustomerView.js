@@ -46,7 +46,7 @@ function CustomerView() {
   return (
       <div className={classes.custviewMain}>
             <TicketList/>            
-      <CssBaseline />
+        <CssBaseline />
       </div>
   );
 }

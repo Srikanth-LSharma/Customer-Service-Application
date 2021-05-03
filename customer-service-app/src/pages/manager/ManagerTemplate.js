@@ -134,14 +134,16 @@ buttonOnclick:{
   }
 ,
   title: {
-    flexGrow: 1,
+    flexGrow: 0.2,
     fontSize: 35,
-    paddingTop:4,
+    paddingTop:4,    
+    marginRight:134,
     fontFamily: 'Bebas Neue',
   },
   username:{
-    paddingRight:4,
-    fontSize:14
+    paddingRight:10,
+    fontSize:14,
+    marginLeft: 24
   },
   logout: {
     color: 'white',
@@ -153,8 +155,9 @@ buttonOnclick:{
     }
   },
   logo: {
-    width: 62,
-    height: 62
+    width: 50,
+    height: 50,
+    marginLeft: 60,
   },
 }));
 

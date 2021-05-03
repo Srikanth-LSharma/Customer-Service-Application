@@ -4,6 +4,7 @@ import Controls from "../../components/controls/Controls";
 import { useForm, Form } from '../../components/useForm';
 import * as EmpTicketService from "../../services/EmpTicketService";
 import axios from 'axios';
+import SnackBar from'../../components/SnackBar'
 
 //const dateDisplay = lazy(() => import("../../components/controls/Datedisplay"));
 const initialFValues = {
@@ -22,6 +23,7 @@ const initialFValues = {
 export default function EmployeeForm(props) {
     const { addOrEdit, recordForEdit } = props
     const [empdata,setEmpData] = useState([]);
+    const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
     
     const validate = (fieldValues = values) => {
         let temp = { ...errors }
@@ -51,6 +53,13 @@ export default function EmployeeForm(props) {
         if (validate()) {
             addOrEdit(values, resetForm);
         }
+    }
+    const unableToEdit = () =>{
+        setNotify({
+            isOpen: true,
+            message: "",
+            type: 'error'
+        })
     }
 
     useEffect(() => {

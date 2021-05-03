@@ -44,7 +44,7 @@ const AppRouter = (props)=>  {
                 <Switch>
                     <div className="App-Router">
                     {
-                        (props.location.pathname=='/CustomerTickets' && _role=="customer") || (props.location.pathname=='/Reviewer' && _role=="reviewer") || (props.location.pathname=='/ServiceExec' && _role=="serviceexec") || props.location.pathname=='/Contact' || props.location.pathname=='/About'? <Navbar/>:null
+                        (props.location.pathname=='/CustomerTickets' && _role=="customer") || (props.location.pathname=='/Reviewer' && _role=="reviewer") || (props.location.pathname=='/ServiceExec' && _role=="serviceexec") || props.location.pathname=='/Contact' || props.location.pathname=='/About' || props.location.pathname=='/Chat'?<Navbar/>:null
                     }
                        {/* <Route exact component={LoginContainer}/>  */}
                         

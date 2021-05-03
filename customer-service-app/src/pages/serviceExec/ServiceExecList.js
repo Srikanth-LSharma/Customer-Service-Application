@@ -3,12 +3,14 @@ import PageHeader from "../../components/PageHeader";
 import RateReviewTwoToneIcon from '@material-ui/icons/RateReviewTwoTone';
 import { Paper, makeStyles, TableBody, TableRow, TableCell, Toolbar, InputAdornment } from '@material-ui/core';
 import useTable from "../../components/useTable";
+import {  useHistory } from 'react-router-dom';
 import * as EmpTicketService from "../../services/EmpTicketService";
 import Controls from "../../components/controls/Controls";
 import { Search } from "@material-ui/icons";
 import Client from '../../services/api/Client'
 import SnackBar from'../../components/SnackBar'
 import ChatIcon from '@material-ui/icons/Chat';
+import Tooltip from '@material-ui/core/Tooltip';
 import useFullPageLoader from '../../components/useFullPageLoader'
 
 const useStyles = makeStyles(theme => ({
@@ -66,6 +68,7 @@ const headCells = [
 export default function Employees() {
 
     const classes = useStyles();
+    const history = useHistory();
     const [records, setRecords] = useState([])
     const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
@@ -93,9 +96,26 @@ export default function Employees() {
               
             console.log(res.data)
         })
-          .catch((error) => {
+          .catch((e) => {
             hideLoader();
-            console.log(error);
+            if(e.Message=="Authorization has been denied for this request."){
+                setNotify({
+                    isOpen: true,
+                    message: "Sorry! Session expired",
+                    type: 'info'
+                })
+                setTimeout(() => {
+                    setNotify({
+                      isOpen: true,
+                      message: "Please login again to continue..",
+                      type: "info",
+                    })
+                  }, 2000);
+                  setTimeout(() => {                       
+                    localStorage.clear();
+                    history.push('/');
+                  }, 4000);
+            }
           })
     }
 
@@ -148,16 +168,22 @@ export default function Employees() {
                                 (<TableRow key={item.TicketID}>
                                     <TableCell align='center'>{item.TicketID}</TableCell>
                                     <TableCell align='center'>{item.CustName}</TableCell>
-                                    <TableCell align='center'>{item.ServiceReqDate.split("T")[0]}</TableCell>
+                                    <TableCell align='center'>{item.ServiceReqDate.split("T")[0].split("-").reverse().join("-")}</TableCell>
                                     <TableCell align='center'>{item.Product}</TableCell>
                                     <TableCell align='center'>{item.Priority}</TableCell>
                                     <TableCell align='center'>
                                         <div className={item.Status==='Open'? classes.statusCellOpen : classes.statusCellClosed} align='center' >{item.Status} </div> 
                                     </TableCell>
                                     <TableCell align='center'>
-                                        <Controls.ActionButton
-                                            color="primary" >
-                                            <ChatIcon fontSize="small" />
+                                    <Controls.ActionButton
+                                            color="chat" 
+                                            onClick={() => {                                               
+                                                localStorage.setItem("ticketID",item.TicketID);
+                                                history.push('/Chat');
+                                            }}>
+                                                <Tooltip title="Chat Window " aria-label="add">
+                                                     <ChatIcon fontSize="small" />
+                                                </Tooltip>
                                         </Controls.ActionButton>
                                     </TableCell>
                                 </TableRow>)

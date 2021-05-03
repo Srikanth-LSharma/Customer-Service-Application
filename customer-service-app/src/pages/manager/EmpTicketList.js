@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import EmpTicketForm from "./EmpTicketForm";
+import {  useHistory } from 'react-router-dom';
 import { Paper, makeStyles, TableBody, TableRow, TableCell, Toolbar, InputAdornment } from '@material-ui/core';
 import useTable from "../../components/useTable";
 import * as EmpTicketService from "../../services/EmpTicketService";
@@ -15,11 +16,14 @@ import ChatIcon from '@material-ui/icons/Chat';
 import CircularProgress from "@material-ui/core/CircularProgress";
 import axios from 'axios';
 import Tooltip from '@material-ui/core/Tooltip';
+import TokenExpiry from '../../services/api/TokenExpiry'
+import CheckExpiry from '../../services/api/TokenExpiry';
 
 const useStyles = makeStyles(theme => ({
     pageContent: {
-        margin: theme.spacing(1),
-        padding: theme.spacing(3),
+        margin: theme.spacing(0),
+        marginRight: theme.spacing(1),
+        padding: theme.spacing(3)
     },
     searchInput: {
         width: '30%'
@@ -62,8 +66,8 @@ const headCells = [
     { id: 'id', label: 'Ticket ID' },
     { id: 'name', label: 'Customer Name' },
     { id: 'date', label: 'Date' },
-    { id: 'ServiceEx', label: 'ServiceEx' },
-    { id: 'Reviewer', label: 'Reviewer' },
+    { id: 'ServiceEx', label: 'ServiceExId' },
+    { id: 'Reviewer', label: 'ReviewerId' },
     { id: 'Product', label: 'Product' },
     { id: 'Priority', label: 'Priority' },
     { id: 'status', label: 'Status' },
@@ -72,7 +76,7 @@ const headCells = [
 ]
 
 export default function Employees() {
-
+    const history = useHistory();
     const classes = useStyles();
     const [recordForEdit, setRecordForEdit] = useState(null)
     const [records, setRecords] = useState([])
@@ -106,16 +110,33 @@ export default function Employees() {
               })))
             //console.log(res.data)
         })
-          .catch((error) => {
+          .catch((e) => {
             hideLoader();
-            console.log(error);
+            if(e.Message=="Authorization has been denied for this request."){
+                setNotify({
+                    isOpen: true,
+                    message: "Sorry! Session expired",
+                    type: 'info'
+                })
+                setTimeout(() => {
+                    setNotify({
+                      isOpen: true,
+                      message: "Please login again to continue..",
+                      type: "info",
+                    })
+                  }, 2000);
+                  setTimeout(() => {                       
+                    localStorage.clear();
+                    history.push('/');
+                  }, 4000);
+            }
           });
     }
 
     const getTicketDetails=(id)=>{
         Client.get('/api/ServExecTicket/'+id).then(
             response =>{
-                   console.log("Ticket details:",response.data)
+                   //console.log("Ticket details:",response.data)
             }).catch((e)=>console.log(e))
     }
 
@@ -123,7 +144,7 @@ export default function Employees() {
         displayTickets()
         axios.get("http://localhost:888/api/getEmployees").then(res=>{
         setEmpData(res.data);
-        console.log("EmpData:",empdata);
+        //console.log("EmpData:",empdata);
     }) .catch((error) => {
         console.log(error);
     })
@@ -142,8 +163,8 @@ export default function Employees() {
     }
 
     const addOrEdit = (ticket, resetForm) => {
-        console.log("ticketID:",ticket.TicketID)
-        getTicketDetails(ticket.TicketID)
+        //console.log("ticketID:",ticket.TicketID)
+        getTicketDetails(ticket.TicketID) 
         Client.get('/api/CustomerIdByName/'+ticket.CustName).then(res=>
         {
             setCustomerID(res.data)
@@ -161,20 +182,39 @@ export default function Employees() {
             console.log("Edit Data to be passed to api:",editdata);
             Client.put('/api/EditEmpTicket/'+editdata.TicketID,editdata).then(
             response =>{
-                console.log("Ticket Edited");
+                //console.log("Ticket Edited");
                 displayTickets()
                 setNotify({
                     isOpen: true,
                     message: 'Submitted Successfully',
                     type: 'success'
                 });
-                   console.log("Accepted input",response.data)
-            }).catch((e)=>
-            setNotify({
-                isOpen: true,
-                message: e.Message,
-                type: 'error'
-            }))
+                // console.log("Accepted input",response.data)
+            }).catch((e)=>{
+                setNotify({
+                    isOpen: true,
+                    message: e.Message,
+                    type: 'error'
+                })
+                if(e.Message=="Authorization has been denied for this request."){
+                    setNotify({
+                        isOpen: true,
+                        message: "Sorry! Session expired",
+                        type: 'info'
+                    })
+                    setTimeout(() => {
+                        setNotify({
+                          isOpen: true,
+                          message: "Please login again to continue..",
+                          type: "info",
+                        })
+                      }, 2000);
+                      setTimeout(() => {                       
+                        localStorage.clear();
+                        history.push('/');
+                      }, 4000);
+                }
+            })
         }).catch((e)=>
         setNotify({
             isOpen: true,
@@ -224,7 +264,7 @@ export default function Employees() {
                                 (<TableRow key={item.TicketID}>
                                     <TableCell align='center'>{item.TicketID}</TableCell>
                                     <TableCell align='center'> {item.CustName}</TableCell>
-                                    <TableCell align='center'>{item.ServiceReqDate.split("T")[0]}</TableCell>
+                                    <TableCell align='center'>{item.ServiceReqDate.split("T")[0].split("-").reverse().join("-")}</TableCell>
                                     <TableCell align='center'>{item.ServiceExecId}</TableCell>
                                     <TableCell align='center'>{item.ReviewerId}</TableCell>
                                     <TableCell align='center'>{item.Product}</TableCell>
@@ -235,7 +275,7 @@ export default function Employees() {
                                     <TableCell align='center'>{item.Feedback===null? 'Nil':item.Feedback}</TableCell>
                                     <TableCell align='center'>
                                         <Controls.ActionButton
-                                        color='primary'                        
+                                        color='secondary'                        
                                             onClick={() => { 
                                                 openInPopup(item)                                                 
                                                 localStorage.setItem("status",item.Status);
@@ -245,7 +285,11 @@ export default function Employees() {
                                                  </Tooltip>
                                         </Controls.ActionButton>
                                         <Controls.ActionButton
-                                            color="primary" >
+                                            color="chat" 
+                                            onClick={() => {                                               
+                                                localStorage.setItem("ticketID",item.TicketID);
+                                                history.push('/Chat');
+                                            }}>
                                             <Tooltip title="Chat Window " >
                                                      <ChatIcon fontSize="small" />
                                                 </Tooltip>

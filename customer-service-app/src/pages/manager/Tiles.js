@@ -43,7 +43,7 @@ export function EmployeeCount(props) {
   
   return (
     <React.Fragment>
-      <Title> Employees </Title>
+      <Title> Number of Employees </Title>
       <Typography component="p" variant="h4" className={classes.depositContext}>
         {empcount}
       </Typography>
@@ -68,7 +68,7 @@ export function CustomerCount(props) {
 
   return (
     <React.Fragment>
-      <Title> Customers </Title>
+      <Title> Number of Customers </Title>
       <Typography component="p" variant="h4" className={classes.depositContext}>
         {custcount}
       </Typography>
