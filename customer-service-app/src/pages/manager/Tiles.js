@@ -1,25 +1,16 @@
 import React,{ useState, useEffect} from 'react';
-import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Title from './Title';
-import axios from 'axios';
-import Grid from '@material-ui/core/Grid';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { Autorenew, ViewColumnTwoTone } from '@material-ui/icons';
-import Date from '../../components/controls/Datedisplay';
-
-function preventDefault(event) {
-  event.preventDefault();
-}
+import {dateDisplay} from '../../components/controls/Datedisplay';
+import Client from '../../services/api/Client'
 
 
-
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme)=>({
   depositContext: {
     flex: 1,
     paddingTop:35,
@@ -35,14 +26,14 @@ const useStyles = makeStyles({
   formControl: {
     maxWidth:110,
   },
-});
+}));
 
 export function EmployeeCount(props) {
   const classes = useStyles();
   const [empcount, setEmpCount] = useState('');
 
   useEffect(()=>{
-    axios.get("https://localhost:44353/api/Manager/EmployeesCount").then(res=>{
+    Client.get("/api/Manager/EmployeesCount").then(res=>{
         setEmpCount(res.data);
         window.localStorage.setItem('empcount', res.data);
     }).catch((e)=>{
@@ -52,12 +43,12 @@ export function EmployeeCount(props) {
   
   return (
     <React.Fragment>
-      <Title> Employees </Title>
+      <Title> Number of Employees </Title>
       <Typography component="p" variant="h4" className={classes.depositContext}>
         {empcount}
       </Typography>
       <Typography color="textSecondary" className={classes.depositContext}>
-        as of <Date/>
+        as of {dateDisplay()}
       </Typography>
     </React.Fragment>
   );
@@ -68,7 +59,7 @@ export function CustomerCount(props) {
   const [custcount, setCustCount] = useState('');
 
   useEffect(()=>{
-    axios.get("https://localhost:44353/api/Manager/CustomerCount").then(res=>{
+    Client.get("/api/Manager/CustomerCount").then(res=>{
         setCustCount(res.data);
     }).catch((e)=>{
         console.log(e)
@@ -77,12 +68,12 @@ export function CustomerCount(props) {
 
   return (
     <React.Fragment>
-      <Title> Customers </Title>
+      <Title> Number of Customers </Title>
       <Typography component="p" variant="h4" className={classes.depositContext}>
         {custcount}
       </Typography>
       <Typography color="textSecondary" className={classes.depositContext}>
-          as of <Date/>
+          as of {dateDisplay()}
       </Typography>
     </React.Fragment>
   );
@@ -93,7 +84,7 @@ export function OpenTickets(props) {
   const [otcount, setOTCount] = useState('');
 
   useEffect(()=>{
-    axios.get("https://localhost:44353/api/Manager/OpenTickets").then(res=>{
+    Client.get("/api/Manager/OpenTickets").then(res=>{
         setOTCount(res.data);
     }).catch((e)=>{
         console.log(e)
@@ -107,7 +98,7 @@ export function OpenTickets(props) {
         {otcount}
       </Typography>
       <Typography color="textSecondary" className={classes.depositContext}>
-          as of <Date/>
+          as of {dateDisplay()}
       </Typography>
     </React.Fragment>
   );
@@ -118,12 +109,14 @@ export function EmployeeTicketCount(props) {
   const classes = useStyles();
   const [etcount, setETCount] = useState('');
   const [empID, setEmpID] = useState('');
+  const [empCount, setEmpCount] = useState('');
 
   const handleChange = e=> setEmpID(e.target.value);
 
-    const empCount=window.localStorage.getItem('empcount');
+    //const empCount=localStorage.getItem('empcount');
     const createElements = () => {
       const elements = [];
+      console.log("Empcount=",empCount)
       for (var i=1; i <= empCount; i++) {
         elements.push(<MenuItem value={i}> {i} </MenuItem>)
       } 
@@ -131,8 +124,14 @@ export function EmployeeTicketCount(props) {
     }
     
   useEffect(()=>{
-    const url='https://localhost:44353/api/Manager/EmployeeTicketCount?id='+empID;
-    axios.get(url).then(res=>{
+    Client.get("/api/Manager/EmployeesCount").then(res=>{
+      setEmpCount(res.data);
+    }).catch((e)=>{
+      console.log(e)
+    });
+    
+    const url='/api/Manager/EmployeeTicketCount?id='+empID;
+    Client.get(url).then(res=>{
         setETCount(res.data);
     }).catch((e)=>{
         console.log(e)
@@ -155,7 +154,7 @@ export function EmployeeTicketCount(props) {
         </Typography> 
              
       <Typography color="textSecondary" className={classes.asOfContext}>
-          as of <Date/>
+          as of {dateDisplay()}
       </Typography>
     </React.Fragment>
   );

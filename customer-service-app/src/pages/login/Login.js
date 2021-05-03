@@ -1,21 +1,22 @@
-import React,{ useState }from 'react';
+import React,{ useEffect, useState }from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Bg from '../../Assets/image.jpg'
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link1 from '@material-ui/core/Link';
-import {Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
+import SnackBar from '../../components/SnackBar';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 //import "../../node_modules/bootstrap/dist/css/bootstrap.css";
 import axios from 'axios';
+import useFullPageLoader from '../../components/useFullPageLoader'
+import CircularProgress from "@material-ui/core/CircularProgress";
 //import Signup from '../components/signup';
 
 
@@ -23,6 +24,12 @@ const useStyles = makeStyles((theme) => ({
   root: {
     height: '100vh',
   },
+  rootLoad: {
+      display: "flex",
+      "& > * + *": {
+        marginLeft: theme.spacing(10),
+      },
+    },
   image: {
     backgroundImage: 'url(' + Bg + ')',
     backgroundRepeat: 'no-repeat',
@@ -32,7 +39,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundPosition: 'center',
   },
   paper: {
-    margin: theme.spacing(8, 4),
+    margin: theme.spacing(0, 4),
+    marginTop: theme.spacing(16),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -48,23 +56,142 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  forgotpasstext: {
+    float:'left',    
+    color:'#4f65e2'
+  },
+  textright: {
+    float:'right',
+    color:'#4f65e2'
+  }
 }));
+
+const KEYS = {
+  access_token: 'access_token',
+  userName: 'userName',
+  expiry:'expiry',
+  role:'role'
+}
 
  function SignInSide(props) {
   const classes = useStyles();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('');
+  const [notify, setNotify] = useState({ isOpen: false, message: "", type: "" });
+  const [loading, setLoading] = useState(false);
+  const [loader, showLoader, hideLoader] = useFullPageLoader();
   const grant_type="password";
+  
+  useEffect(()=>{
+     let token = localStorage.getItem("access_token");
+     let _role = localStorage.getItem("role");
+     if(token!=null){
+       if(_role==="manager"){
+         props.history.push('/Manager');
+       }
+       else if(_role==="reviewer"){
+         props.history.push('/Reviewer');
+       }
+       else if(_role==="serviceexec"){
+         props.history.push('/ServiceExec');
+       }
+       else if(_role==="customer"){
+         props.history.push('/CustomerTickets');
+       }
+     }
+    if(role==="manager"){
+      console.log("manager test1")
+      props.history.push('/Manager');
+    }
+    else if(role==="reviewer"){
+      props.history.push('/Reviewer');
+    }
+    else if(role==="serviceexec"){
+      props.history.push('/ServiceExec');
+    }
+    else if(role==="customer"){
+      props.history.push('/CustomerTickets');
+    }
+  },[role])  
+
+
+
+  const roleRedirectingURL=()=>([
+    { id: 'manager', url: '/Manager' },
+    { id: 'customer', url: '/Home' },
+    { id: 'reviewer', url: '/Reviewer' },
+    { id: 'serviceexec', url:'/ServiceExec'}
+])
   
   const handleSubmit = (e) =>{ 
     e.preventDefault();
-    const loginText = "username="+username+"&password="+password+"&grant_type="+grant_type;
-    console.log(loginText);    
-    axios.post("https://localhost:44353/token",loginText).then(response =>{
+    showLoader();
+    setTimeout(() => {
+      setNotify({
+        isOpen: true,
+        message: "Just a moment-- we're getting things ready for you...",
+        type: "info",
+      })
+    }, 2000);
+    setTimeout(() => {
+      setNotify({
+        isOpen: true,
+        message: "Almost done..",
+        type: "info",
+      })
+    }, 5000);
+    const loginText = "username="+username+"&password="+password+"&grant_type="+grant_type;   
+    axios.post("http://localhost:888/token",loginText).then(response =>{
+            hideLoader();
+            let expires = ".expires";
             console.log("Accepted input",response.data)
+<<<<<<< HEAD
                 }).catch((e)=>console.log(e));
                 
     props.history.push('/About');
+=======
+            console.log("Expiry date and time:",response.data[expires])
+            let today = new Date();
+            let token = response.data.access_token;
+            console.log("Current Date and Time:",today.toGMTString());
+            localStorage.setItem(KEYS.expiry,response.data[expires]);
+            localStorage.setItem(KEYS.access_token, token);
+            localStorage.setItem(KEYS.userName, response.data.userName);
+            const config = {
+              headers: { Authorization: `Bearer ${token}` }
+            };
+            const custdata={
+              CustName: localStorage.getItem("Name")
+            }
+            console.log("Data to be passed to Add customer",custdata)
+            axios.post("http://localhost:888/api/AddCustomer",custdata,config).then(res=>
+            {
+              console.log(res.data);
+            }).catch(e => {console.log(e)})
+            axios.get("http://localhost:888/api/userRoles",config).then(res=>
+              {
+                localStorage.setItem(KEYS.role,res.data);
+                //window.location.reload(true);
+                setRole(res.data);
+                console.log("Role: ",res.data);              
+             }).catch(e => {console.log(e)})
+            setNotify({
+              isOpen: true,
+              message: "Login Successful",
+              type: "success",
+            })
+           // let urls=roleRedirectingURL();           
+            }).catch((e)=>{
+              hideLoader();
+              setNotify({
+                isOpen: true,
+                message: e.response.data.error_description,
+                type: "error",
+          })
+        }
+    )
+>>>>>>> Ticket_CRUD
   }
 
   return (
@@ -83,6 +210,7 @@ const useStyles = makeStyles((theme) => ({
             <TextField
               variant="outlined"
               margin="normal"
+              //autoComplete="off"
               required
               fullWidth
               id="email"
@@ -106,10 +234,6 @@ const useStyles = makeStyles((theme) => ({
               value={password}
               onChange={e => setPassword(e.target.value)}
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
             <Button
               type="submit"
               fullWidth
@@ -119,23 +243,19 @@ const useStyles = makeStyles((theme) => ({
             >
               Sign In
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link1 href="/forgotPassword" variant="body2">
+                <Link1 href="/" variant="body2" className={classes.forgotpasstext}>
                   Forgot password?
                 </Link1>
-              </Grid>
-              <Grid item>
-                <Link to="/Signup" variant="body2">
+                <Link to="/Signup" variant="body2" className={classes.textright}>
                   {"Don't have an account? Sign Up"}
                 </Link>
-              </Grid>
-            </Grid>
             <Box mt={5}>
             </Box>
-          </form>
-        </div>
-      </Grid>
+          </form>          
+        </div>         
+          {loader}
+      </Grid>  
+      <SnackBar notify={notify} setNotify={setNotify} />    
     </Grid>
   );
 }

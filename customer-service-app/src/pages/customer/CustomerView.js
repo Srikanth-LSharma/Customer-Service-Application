@@ -1,8 +1,8 @@
-import React from 'react';
-import SideMenu from "../../components/SideMenu";
+import React, { useContext } from 'react';
 import { makeStyles, CssBaseline, createMuiTheme, ThemeProvider } from '@material-ui/core';
-import Header from "../../components/Header";
 import TicketList from "./TicketList";
+import ThemeContext from '../../ThemeContext';
+
 
 const theme = createMuiTheme({
   palette: {
@@ -43,14 +43,12 @@ const useStyles = makeStyles({
 
 function CustomerView() {
   const classes = useStyles();
-
+  const theme = useContext(ThemeContext);
   return (
-    <ThemeProvider theme={theme}>
-      <div className={classes.custviewMain}> 
-            <TicketList/>
+      <div className={classes.custviewMain}>
+            <TicketList/>            
+        <CssBaseline />
       </div>
-      <CssBaseline />
-    </ThemeProvider>
   );
 }
 

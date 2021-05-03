@@ -9,38 +9,31 @@ import PeopleIcon from '@material-ui/icons/People';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import LayersIcon from '@material-ui/icons/Layers';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import RateReviewTwoToneIcon from '@material-ui/icons/RateReviewTwoTone';
+import {NavLink} from "react-router-dom";
 
+import Tooltip from '@material-ui/core/Tooltip';
+
+const eventHandler=()=>{
+  console.log("Clicked");
+}
 export const mainListItems = (
   <div>
-    <ListItem button>
+    <ListItem button  component ={NavLink} to ="/Dashboard">
       <ListItemIcon>
+      <Tooltip title="Dashboard" fontSize='50px' arrow>
         <DashboardIcon />
+      </Tooltip>
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItem>
-    <ListItem button>
+    <ListItem button  component ={NavLink} to ="/Manager">
       <ListItemIcon>
-        <ShoppingCartIcon />
+      <Tooltip title="View All Tickets" fontSize='50px' arrow>
+        <RateReviewTwoToneIcon />
+        </Tooltip>
       </ListItemIcon>
-      <ListItemText primary="Orders" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <PeopleIcon />
-      </ListItemIcon>
-      <ListItemText primary="Customers" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <BarChartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Reports" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <LayersIcon />
-      </ListItemIcon>
-      <ListItemText primary="Integrations" />
+      <ListItemText primary="Service Tickets" />
     </ListItem>
   </div>
 );

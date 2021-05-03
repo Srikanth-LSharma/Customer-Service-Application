@@ -1,10 +1,7 @@
-import React from 'react';
 
-const dateDisplay = () => {
-    const months = ["JAN", "FEB", "MAR","APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-    let current_datetime = new Date();
-    let formatted_date = current_datetime.getDate() + "-" + months[current_datetime.getMonth()] + "-" + current_datetime.getFullYear();
-    return(formatted_date);
+export const dateDisplay = () => {
+       
+    const date= new Date().toString();
+    const index = date.lastIndexOf(':') +3;
+    return(date.substring(0, index));
 }
-
-export default dateDisplay;

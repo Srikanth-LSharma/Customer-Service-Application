@@ -1,18 +1,27 @@
-import React from "react";
-import { Box ,Typography } from "@material-ui/core";
+import React from 'react';
+import {CssBaseline} from '@material-ui/core';
+import Bg from '../Assets/signupbg1.JPG'
 
-const About = () => {
-    return(
-        <div>
-            <Box py= {20} textAlign = "center">
-                <Typography variant = "h1"> About Page </Typography>
-                <p className="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+import AboutText from './AboutText';
 
-                <p className="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            </Box>
-        </div>
-        
-    );
+const sectionStyle = {
+  backgroundImage: `url(${Bg})`,
+  backgroundRepeat: 'no-repeat',
+  backgroundSize: 'cover',
+  width: '100%',
+  maxHeight: '100vh',
+  paddingTop:'10px'
 };
 
-export default About;
+function OverviewCompany() {
+  return(    
+    <div style={ sectionStyle }>
+      <section>
+        <AboutText/>
+      </section>
+      <CssBaseline />
+    </div>
+  );
+} 
+
+export default OverviewCompany;

@@ -2,6 +2,7 @@ import React from "react";
 import { Box ,Typography } from "@material-ui/core";
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
+import Client from '../services/api/Client';
 
 
 const Home = () => {  
@@ -17,12 +18,9 @@ const Home = () => {
       }
 
     const registerUser = () =>{
-        axios.post("https://localhost:44353/api/Account/Register",user).then(res=>{
-            console.log("test",res.data);
-           
+        axios.post("http://localhost:888/api/Account/Register",user).then(res=>{
+            console.log("test",res.data);           
         }).catch(e => {console.log(e)});
-
-        
     }
      
     const getCustomers=()=>{
@@ -34,12 +32,20 @@ const Home = () => {
         
     }
     const getEmployeeCount=()=>{
-        axios.get("https://localhost:44353/api/Manager/EmployeesCount").then(res=>{
+        Client.get("/api/Manager/EmployeesCount").then(res=>{
+            console.log(res.data);
+        }).catch((e)=>{
+            alert(e.Message)
+        });
+        
+    }
+
+    const getCustomerTickets=()=>{
+        Client.get("/api/CustomerTickets").then(res=>{
             console.log(res.data);
         }).catch((e)=>{
             console.log(e)
         });
-        
     }
     const params = {
         grant_type: 'password',
@@ -53,7 +59,7 @@ const Home = () => {
 
     const handleSubmit = () =>{ 
         
-        axios.post("https://localhost:44353/token","username=dhinesh1@gmail.com&password=Password#1234&grant_type=password").then(response =>{
+        axios.post("http://localhost:888/token","username=dhinesh1@gmail.com&password=Password#1234&grant_type=password").then(response =>{
                 console.log("Accepted input",response.data)
                     }).catch((e)=>console.log(e))
     }
@@ -68,9 +74,9 @@ const Home = () => {
               fullWidth
               variant="contained"
               color="primary"
-              onClick ={handleSubmit}
+              onClick ={getCustomerTickets}
             >
-              Get Employees
+              API Test Button
             </Button>
         </div>
         
